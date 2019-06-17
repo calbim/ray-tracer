@@ -10,10 +10,22 @@ type Tuple struct {
 	w float32
 }
 
+// Point is a factory method that returns a point Tuple
 func Point(x, y, z float32) Tuple {
 	return Tuple{x, y, z, 1.0}
 }
 
+// Vector is a factory method that returns a point Vector
 func Vector(x, y, z float32) Tuple {
 	return Tuple{x, y, z, 0.0}
+}
+
+// Add adds two tuples
+func Add(t1, t2 Tuple) Tuple {
+	return Tuple{t1.x + t2.x, t1.y + t2.y, t1.z + t2.z, t1.w + t2.w}
+}
+
+// Subtract subtracts two tuples
+func Subtract(t1, t2 Tuple) Tuple {
+	return Tuple{t1.x - t2.x, t1.y - t2.y, t1.z - t2.z, t1.w - t2.w}
 }

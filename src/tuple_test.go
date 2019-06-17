@@ -49,3 +49,20 @@ func TestVector(t *testing.T) {
 		t.Errorf("tuple should be a vector")
 	}
 }
+
+func TestAdd(t *testing.T) {
+	t1 := Tuple{3, -2, 5, 1}
+	t2 := Tuple{-2, 3, 1, 0}
+	t3 := Add(t1, t2)
+	if t3.x != 1 || t3.y != 1 || t3.z != 6 {
+		t.Errorf("tuples should add to (1,1,6,1)")
+	}
+}
+func TestSubtract(t *testing.T) {
+	t1 := Point(3, 2, 1)
+	t2 := Point(5, 6, 7)
+	t3 := Subtract(t1, t2)
+	if t3.x != -2 || t3.y != -4 || t3.z != -6 || t3.w != 0 {
+		t.Errorf("tuples should subtract to give a vector (-2,-4,-6)")
+	}
+}
