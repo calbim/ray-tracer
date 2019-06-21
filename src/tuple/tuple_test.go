@@ -133,11 +133,55 @@ func TestMagnitude(t *testing.T) {
 		t.Errorf("should be 1")
 	}
 	tup = Vector(1, 2, 3)
-	if !util.Equals(Magnitude(tup), 3.7416573) {
-		t.Errorf("should be 3.7416573")
+	if !util.Equals(Magnitude(tup), 3.741657) {
+		t.Errorf("should be 3.74165")
 	}
 	tup = Vector(-1, -2, -3)
-	if !util.Equals(Magnitude(tup), 3.7416573) {
-		t.Errorf("should be 3.7416573")
+	if !util.Equals(Magnitude(tup), 3.741657) {
+		t.Errorf("should be 3.74165")
 	}
+}
+
+func TestNormalize(t *testing.T) {
+	tup := Vector(4, 0, 0)
+	if Normalize(tup) != Vector(1, 0, 0) {
+		t.Errorf("normalized vector should be a unit vector")
+	}
+
+	tup = Vector(1, 2, 3)
+	nt := Normalize(tup)
+	if !nt.equals(Vector(0.26726, 0.53452, 0.80178)) {
+		t.Errorf("normalized vector should be a unit vector %v", nt)
+	}
+}
+
+func TestMagnitudeOfNormalizedVector(t *testing.T) {
+	n := Normalize(Vector(1, 2, 3))
+	if !util.Equals(Magnitude(n), 1) {
+		t.Errorf("Magnitude of a normalized vector is 1")
+	}
+}
+
+func TestDotProduct(t *testing.T) {
+	v1 := Vector(1, 2, 3)
+	v2 := Vector(2, 3, 4)
+	if DotProduct(v1, v2) != 20 {
+		t.Errorf("Dot product of vector(1,2,3) and vector(2,3,4) should be 20")
+	}
+}
+
+func TestCrossProduct(t *testing.T) {
+	v1 := Vector(1, 2, 3)
+	v2 := Vector(2, 3, 4)
+	if !CrossProduct(v1, v2).equals(Vector(-1, 2, -1)) || !CrossProduct(v2, v1).equals(Vector(1, -2, 1)) {
+		t.Errorf("Cross product of v1 and v2 should vector(-1,2,-1)")
+	}
+}
+
+func (t1 Tuple) equals(t2 Tuple) bool {
+	if util.Equals(t1.x, t2.x) && util.Equals(t1.y, t2.y) &&
+		util.Equals(t1.z, t2.z) && util.Equals(t1.w, t2.w) {
+		return true
+	}
+	return false
 }
