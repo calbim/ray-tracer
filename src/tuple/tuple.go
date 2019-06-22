@@ -6,10 +6,10 @@ import "math"
 // w = 1.0 for a point
 // w = 0.0 for a vector
 type Tuple struct {
-	x float64
-	y float64
-	z float64
-	w float64
+	X float64
+	Y float64
+	Z float64
+	W float64
 }
 
 // Point is a factory method that returns a point Tuple
@@ -24,32 +24,32 @@ func Vector(x, y, z float64) Tuple {
 
 // Add adds t1 and t2 and returns a tuple
 func Add(t1, t2 Tuple) Tuple {
-	return Tuple{t1.x + t2.x, t1.y + t2.y, t1.z + t2.z, t1.w + t2.w}
+	return Tuple{t1.X + t2.X, t1.Y + t2.Y, t1.Z + t2.Z, t1.W + t2.W}
 }
 
 // Subtract subtracts t2 from t1 and returns a tuple
 func Subtract(t1, t2 Tuple) Tuple {
-	return Tuple{t1.x - t2.x, t1.y - t2.y, t1.z - t2.z, t1.w - t2.w}
+	return Tuple{t1.X - t2.X, t1.Y - t2.Y, t1.Z - t2.Z, t1.W - t2.W}
 }
 
 // Negate returns the negative of a tuple
 func Negate(tup Tuple) Tuple {
-	return Tuple{-tup.x, -tup.y, -tup.z, -tup.w}
+	return Tuple{-tup.X, -tup.Y, -tup.Z, -tup.W}
 }
 
 // MultiplyByScalar multiplies a tuple with a scalar and returns the result
 func MultiplyByScalar(t Tuple, f float64) Tuple {
-	return Tuple{t.x * f, t.y * f, t.z * f, t.w * f}
+	return Tuple{t.X * f, t.Y * f, t.Z * f, t.W * f}
 }
 
 // DivideByScalar divides a tuple with a scalar and returns the result
 func DivideByScalar(t Tuple, f float64) Tuple {
-	return Tuple{t.x / f, t.y / f, t.z / f, t.w / f}
+	return Tuple{t.X / f, t.Y / f, t.Z / f, t.W / f}
 }
 
 // Magnitude returns the magnitude of a vector
 func Magnitude(t Tuple) float64 {
-	return math.Sqrt(t.x*t.x + t.y*t.y + t.z*t.z + t.w*t.w)
+	return math.Sqrt(t.X*t.X + t.Y*t.Y + t.Z*t.Z + t.W*t.W)
 }
 
 // Normalize converts a vector to a unit vector while preserving the direction of the vector
@@ -59,10 +59,10 @@ func Normalize(t Tuple) Tuple {
 
 // DotProduct returns the scalar product of two vectors
 func DotProduct(v1, v2 Tuple) float64 {
-	return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z + v1.w*v2.w
+	return v1.X*v2.X + v1.Y*v2.Y + v1.Z*v2.Z + v1.W*v2.W
 }
 
 // CrossProduct returns the vector product of two vectors
 func CrossProduct(v1, v2 Tuple) Tuple {
-	return Tuple{v1.y*v2.z - v1.z*v2.y, v1.z*v2.x - v2.z*v1.x, v1.x*v2.y - v2.x*v1.y, 0}
+	return Tuple{v1.Y*v2.Z - v1.Z*v2.Y, v1.Z*v2.X - v2.Z*v1.X, v1.X*v2.Y - v2.X*v1.Y, 0}
 }
