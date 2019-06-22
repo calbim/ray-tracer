@@ -66,3 +66,16 @@ func DotProduct(v1, v2 Tuple) float64 {
 func CrossProduct(v1, v2 Tuple) Tuple {
 	return Tuple{v1.Y*v2.Z - v1.Z*v2.Y, v1.Z*v2.X - v2.Z*v1.X, v1.X*v2.Y - v2.X*v1.Y, 0}
 }
+
+// Color returns a tuple that denotes a color
+// X = red; Y = blue; Z = green
+func Color(r, b, g float64) Tuple {
+	return Tuple{r, b, g, 0}
+}
+
+// HadamardProduct is what you do to blend two colors
+func HadamardProduct(c1, c2 Tuple) Tuple {
+	return Tuple{
+		c1.X * c2.X, c1.Y * c2.Y, c1.Z * c2.Z, 0,
+	}
+}

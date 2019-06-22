@@ -178,6 +178,43 @@ func TestCrossProduct(t *testing.T) {
 	}
 }
 
+func TestColor(t *testing.T) {
+	c := Color(-0.5, 0.4, 1.7)
+	if c.X != -0.5 || c.Y != 0.4 || c.Z != 1.7 {
+		t.Errorf("Colors are assigned incorrectly")
+	}
+}
+
+func TestAddColor(t *testing.T) {
+	c1 := Color(0.9, 0.6, 0.75)
+	c2 := Color(0.7, 0.1, 0.25)
+	if !Add(c1, c2).equals(Color(1.6, 0.7, 1.0)) {
+		t.Errorf("Sum of colours should be color(1.6, 0.7, 1.0)")
+	}
+}
+
+func TestSubtractColor(t *testing.T) {
+	c1 := Color(0.9, 0.6, 0.75)
+	c2 := Color(0.7, 0.1, 0.25)
+	if !Subtract(c1, c2).equals(Color(0.2, 0.5, 0.5)) {
+		t.Errorf("Difference of colours should be color(0.2, 0.5, 0.5)")
+	}
+}
+func TestMultiplyColor(t *testing.T) {
+	c := Color(0.2, 0.3, 0.4)
+	if !MultiplyByScalar(c, 2).equals(Color(0.4, 0.6, 0.8)) {
+		t.Errorf(" of colours should be color(0.4, 0.6, 0.8)")
+	}
+}
+
+func TestHadamardProduct(t *testing.T) {
+	c1 := Color(1, 0.2, 0.4)
+	c2 := Color(0.9, 1, 0.1)
+	if !HadamardProduct(c1, c2).equals(Color(0.9, 0.2, 0.04)) {
+		t.Errorf("Hadamard product of colours should be color(0.9, 0.2, 0.04)")
+	}
+}
+
 func (t1 Tuple) equals(t2 Tuple) bool {
 	if util.Equals(t1.X, t2.X) && util.Equals(t1.Y, t2.Y) &&
 		util.Equals(t1.Z, t2.Z) && util.Equals(t1.W, t2.W) {
