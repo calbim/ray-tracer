@@ -150,7 +150,7 @@ func TestNormalize(t *testing.T) {
 
 	tup = Vector(1, 2, 3)
 	nt := Normalize(tup)
-	if !nt.equals(Vector(0.26726, 0.53452, 0.80178)) {
+	if !Equals(nt, Vector(0.26726, 0.53452, 0.80178)) {
 		t.Errorf("normalized vector should be a unit vector %v", nt)
 	}
 }
@@ -173,7 +173,7 @@ func TestDotProduct(t *testing.T) {
 func TestCrossProduct(t *testing.T) {
 	v1 := Vector(1, 2, 3)
 	v2 := Vector(2, 3, 4)
-	if !CrossProduct(v1, v2).equals(Vector(-1, 2, -1)) || !CrossProduct(v2, v1).equals(Vector(1, -2, 1)) {
+	if !Equals(CrossProduct(v1, v2), Vector(-1, 2, -1)) || !Equals(CrossProduct(v2, v1), (Vector(1, -2, 1))) {
 		t.Errorf("Cross product of v1 and v2 should vector(-1,2,-1)")
 	}
 }
@@ -188,7 +188,7 @@ func TestColor(t *testing.T) {
 func TestAddColor(t *testing.T) {
 	c1 := Color(0.9, 0.6, 0.75)
 	c2 := Color(0.7, 0.1, 0.25)
-	if !Add(c1, c2).equals(Color(1.6, 0.7, 1.0)) {
+	if !Equals(Add(c1, c2), Color(1.6, 0.7, 1.0)) {
 		t.Errorf("Sum of colours should be color(1.6, 0.7, 1.0)")
 	}
 }
@@ -196,13 +196,13 @@ func TestAddColor(t *testing.T) {
 func TestSubtractColor(t *testing.T) {
 	c1 := Color(0.9, 0.6, 0.75)
 	c2 := Color(0.7, 0.1, 0.25)
-	if !Subtract(c1, c2).equals(Color(0.2, 0.5, 0.5)) {
+	if !Equals(Subtract(c1, c2), Color(0.2, 0.5, 0.5)) {
 		t.Errorf("Difference of colours should be color(0.2, 0.5, 0.5)")
 	}
 }
 func TestMultiplyColor(t *testing.T) {
 	c := Color(0.2, 0.3, 0.4)
-	if !MultiplyByScalar(c, 2).equals(Color(0.4, 0.6, 0.8)) {
+	if !Equals(MultiplyByScalar(c, 2), Color(0.4, 0.6, 0.8)) {
 		t.Errorf(" of colours should be color(0.4, 0.6, 0.8)")
 	}
 }
@@ -210,15 +210,7 @@ func TestMultiplyColor(t *testing.T) {
 func TestHadamardProduct(t *testing.T) {
 	c1 := Color(1, 0.2, 0.4)
 	c2 := Color(0.9, 1, 0.1)
-	if !HadamardProduct(c1, c2).equals(Color(0.9, 0.2, 0.04)) {
+	if !Equals(HadamardProduct(c1, c2), Color(0.9, 0.2, 0.04)) {
 		t.Errorf("Hadamard product of colours should be color(0.9, 0.2, 0.04)")
 	}
-}
-
-func (t1 Tuple) equals(t2 Tuple) bool {
-	if util.Equals(t1.X, t2.X) && util.Equals(t1.Y, t2.Y) &&
-		util.Equals(t1.Z, t2.Z) && util.Equals(t1.W, t2.W) {
-		return true
-	}
-	return false
 }

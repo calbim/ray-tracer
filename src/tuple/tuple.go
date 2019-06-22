@@ -1,6 +1,10 @@
 package tuple
 
-import "math"
+import (
+	"math"
+
+	"../util"
+)
 
 // A Tuple is a set of coordinates (x,y,z) that represent a  point or direction in space.
 // w = 1.0 for a point
@@ -78,4 +82,13 @@ func HadamardProduct(c1, c2 Tuple) Tuple {
 	return Tuple{
 		c1.X * c2.X, c1.Y * c2.Y, c1.Z * c2.Z, 0,
 	}
+}
+
+// TupleEquals checks for the equality of two tuples
+func Equals(t1, t2 Tuple) bool {
+	if util.Equals(t1.X, t2.X) && util.Equals(t1.Y, t2.Y) &&
+		util.Equals(t1.Z, t2.Z) && util.Equals(t1.W, t2.W) {
+		return true
+	}
+	return false
 }
