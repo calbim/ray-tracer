@@ -62,27 +62,34 @@ func TestCanvastoPPM(t *testing.T) {
 	}
 }
 
-// func TestSplitLongLinesinPPM(t *testing.T) {
-// 	c := New(10, 2)
-// 	color := tuple.Color(1, 0.8, 0.6)
-// 	for i := 0; i < 10; i++ {
-// 		for j := 0; j < 2; j++ {
-// 			WritePixel(&c, i, j, color)
-// 		}
-// 	}
-// 	ppm := ToPPM(c)
-// 	ppmSplit := strings.Split(ppm, "\n")
-// 	if ppmSplit[3] != "255 204 153 255 204 153 255 204 153 255 204 153 255 204" {
-// 		t.Errorf("Incorrect splitting of long strings")
-// 	}
-// 	if ppmSplit[4] != "153 255 204 153 255 204 153 255 204 153 255 204 153" {
-// 		t.Errorf("Incorrect splitting of long strings")
-// 	}
-// 	if ppmSplit[5] != "255 204 153 255 204 153 255 204 153 255 204 153 255 204" {
-// 		t.Errorf("Incorrect splitting of long strings")
-// 	}
-// 	if ppmSplit[6] != "153 255 204 153 255 204 153 255 204 153 255 204 153" {
-// 		t.Errorf("Incorrect splitting of long strings")
-// 	}
+func TestSplitLongLinesinPPM(t *testing.T) {
+	c := New(10, 2)
+	color := tuple.Color(1, 0.8, 0.6)
+	for i := 0; i < 10; i++ {
+		for j := 0; j < 2; j++ {
+			WritePixel(&c, i, j, color)
+		}
+	}
+	ppm := ToPPM(c)
+	ppmSplit := strings.Split(ppm, "\n")
+	if ppmSplit[3] != "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204" {
+		t.Errorf("Incorrect splitting of long strings")
+	}
+	if ppmSplit[4] != "153 255 204 153 255 204 153 255 204 153 255 204 153" {
+		t.Errorf("Incorrect splitting of long strings")
+	}
+	if ppmSplit[5] != "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204" {
+		t.Errorf("Incorrect splitting of long strings")
+	}
+	if ppmSplit[6] != "153 255 204 153 255 204 153 255 204 153 255 204 153" {
+		t.Errorf("Incorrect splitting of long strings")
+	}
+}
 
-// }
+func TestEndofRow(t *testing.T) {
+	c := New(5, 3)
+	ppm := ToPPM(c)
+	if !strings.HasSuffix(ppm, "\n") {
+		t.Errorf("PPM file should end with a new line")
+	}
+}

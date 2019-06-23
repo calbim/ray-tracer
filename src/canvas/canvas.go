@@ -35,39 +35,46 @@ func WritePixel(c *Canvas, x int, y int, p tuple.Tuple) {
 // ToPPM returns the PPM string representation of a canvas
 func ToPPM(c Canvas) string {
 	var b strings.Builder
-	b.WriteString("P3\n")
-	b.WriteString(fmt.Sprintf("%d %d\n", c.width, c.height))
-	b.WriteString(fmt.Sprintf("%d\n", 255))
+	var h strings.Builder
+	h.WriteString("P3\n")
+	h.WriteString(fmt.Sprintf("%d %d\n", c.width, c.height))
+	h.WriteString(fmt.Sprintf("%d\n", 255))
 	for i := 0; i < c.height; i++ {
 		for j := 0; j < c.width; j++ {
 			pix := ToPixel(c.pixels[i][j])
 			b.WriteString(pix)
 			if j == c.width-1 {
-				b.WriteString("\n")
-			} else {
-				b.WriteString(" ")
+				b.WriteString("\n ")
 			}
 		}
 	}
-	s := b.String()
-	return s
-	// res := ""
-	// line := 0
-	// for i := 0; i < len(s); {
-	// 	pix := string(s[i : i+3])
-	// 	res = res + pix
-	// 	line = line + 3
-	// 	i = i + 3
-	// 	if line >= 67 {
-	// 		res = res + "\n"
-	// 	}
-	// 	wspace := string(s[i])
-	// 	if wspace == " " {
-	// 		res = res + wspace
-	// 	}
+	return h.String() + b.String()
 
-	// }
-	// return b.String()
+	// return h.String() + SplitPPM(b.String())
+}
+
+//SplitPPM splits long rows in PPM files when they exceed 70 chars
+func SplitPPM(s string) string {
+	tmp := strings.Split(s, " ")
+	res := ""
+	l := 0
+	i := 0
+	for i = 0; i < len(tmp)-1; i++ {
+		res = res + tmp[i]
+		l = l + len(tmp[i])
+		if tmp[i+1] == "\n" {
+			res = res + "\n"
+			l = 0
+			i = i + 1
+		} else if l+len(tmp[i+1]) >= 70 {
+			res = res + "\n"
+			l = 0
+		} else {
+			res = res + " "
+			l = l + 1
+		}
+	}
+	return res
 }
 
 // ToPixel converts a color tuple to an string of 3 integers
@@ -77,7 +84,7 @@ func ToPixel(color tuple.Tuple) string {
 	b := ColorToString(color.Y)
 	g := ColorToString(color.Z)
 
-	return r + " " + b + " " + g
+	return r + " " + b + " " + g + " "
 }
 
 // ColorToString converts a float64 representing a hue (r, b or g)
