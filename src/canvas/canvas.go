@@ -35,43 +35,37 @@ func WritePixel(c *Canvas, x int, y int, p tuple.Tuple) {
 // ToPPM returns the PPM string representation of a canvas
 func ToPPM(c Canvas) string {
 	var b strings.Builder
-	var h strings.Builder
-	h.WriteString("P3\n")
-	h.WriteString(fmt.Sprintf("%d %d\n", c.width, c.height))
-	h.WriteString(fmt.Sprintf("%d\n", 255))
+	b.WriteString("P3\n")
+	b.WriteString(fmt.Sprintf("%d %d\n", c.width, c.height))
+	b.WriteString(fmt.Sprintf("%d\n", 255))
+	length := 0
 	for i := 0; i < c.height; i++ {
 		for j := 0; j < c.width; j++ {
 			pix := ToPixel(c.pixels[i][j])
 			b.WriteString(pix)
-			if j == c.width-1 {
-				b.WriteString("\n ")
+			length = length + len(pix)
+			if length > 56 {
+				b.WriteString("\n")
+				length = 0
+			} else if j == c.width-1 {
+				b.WriteString("\n")
+				length = 0
 			}
 		}
 	}
-	return h.String() + b.String()
-
-	// return h.String() + SplitPPM(b.String())
+	return b.String()
 }
 
 //SplitPPM splits long rows in PPM files when they exceed 70 chars
 func SplitPPM(s string) string {
-	tmp := strings.Split(s, " ")
+	slice := strings.Fields(s)
 	res := ""
-	l := 0
-	i := 0
-	for i = 0; i < len(tmp)-1; i++ {
-		res = res + tmp[i]
-		l = l + len(tmp[i])
-		if tmp[i+1] == "\n" {
-			res = res + "\n"
-			l = 0
-			i = i + 1
-		} else if l+len(tmp[i+1]) >= 70 {
-			res = res + "\n"
-			l = 0
-		} else {
-			res = res + " "
-			l = l + 1
+	limit := 17
+	for len(slice) > 0 {
+		res = res + strings.Join(slice[:limit], " ") + "\n"
+		slice = slice[limit:]
+		if len(slice) < limit {
+			limit = len(slice)
 		}
 	}
 	return res
