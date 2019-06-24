@@ -41,7 +41,7 @@ func TestDrawProjectile(t *testing.T) {
 		x := int(np.point.X)
 		y := int(np.point.Y)
 		if x <= 900 && y <= 550 {
-			canvas.WritePixel(&c, x, y, tuple.Color(1, 0, 0))
+			canvas.WritePixel(&c, x, y, tuple.Color(1, 0, 1))
 		}
 		np = tick(np, e)
 	}
