@@ -77,3 +77,14 @@ func TestEqualsForNonIdentical(t *testing.T) {
 		t.Errorf("Matrices are not equal")
 	}
 }
+
+func TestMultiply(t *testing.T) {
+	m := New([]float64{1, 2, 3, 4, 5, 6, 7, 8, 9,
+		8, 7, 6, 5, 4, 3, 2}, 4, 4)
+	n := New([]float64{-2, 1, 2, 3, 3, 2, 1, -1, 4,
+		3, 6, 5, 1, 2, 7, 8}, 4, 4)
+	if !Equals(Multiply(m, n), New([]float64{20, 22, 50, 48, 44,
+		54, 114, 108, 40, 58, 110, 102, 16, 26, 46, 42}, 4, 4), 4, 4, 4, 4) {
+		t.Errorf("Multiplication is incorrect")
+	}
+}
