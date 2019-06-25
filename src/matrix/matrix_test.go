@@ -102,3 +102,12 @@ func TestMultiplyWithTuple(t *testing.T) {
 	}
 
 }
+
+func TestMultiplyWithIdentity(t *testing.T) {
+	m := New([]float64{0, 1, 2, 4, 1, 2, 4, 8,
+		2, 4, 8, 16, 4, 8, 16, 32}, 4, 4)
+	p := Multiply(m, NewIdentity())
+	if !Equals(p, m, 4, 4, 4, 4) {
+		t.Errorf("Product of a matrix and identity matrix should be the original matrix")
+	}
+}

@@ -18,6 +18,15 @@ func New(a []float64, r, c int) [][]float64 {
 	return m
 }
 
+func NewIdentity() [][]float64 {
+	m := make([][]float64, 4)
+	for i := 0; i < 4; i++ {
+		m[i] = make([]float64, 4)
+	}
+	m[0][0], m[1][1], m[2][2], m[3][3] = 1, 1, 1, 1
+	return m
+}
+
 // Equals checks matrix equality for two matrices
 func Equals(a, b [][]float64, arow, acol, brow, bcol int) bool {
 	if arow != brow || acol != bcol {
