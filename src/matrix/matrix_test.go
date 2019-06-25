@@ -128,3 +128,10 @@ func TestIdentityTranspose(t *testing.T) {
 		t.Errorf("Transpose of identity matrix is incorrect")
 	}
 }
+
+func TestTwoByTwoDeterminant(t *testing.T) {
+	m := New([]float64{1, 5, -3, 2}, 2, 2)
+	if DeterminantTwoByTwo(m) != 17 {
+		t.Errorf("Determinant of 2X2 matrix should be 17, is %f", DeterminantTwoByTwo(m))
+	}
+}

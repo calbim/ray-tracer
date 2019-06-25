@@ -1,8 +1,13 @@
 package matrix
 
-import "../tuple"
+import (
+	"math"
+
+	"../tuple"
+)
 
 // New Returns a new matrix with r rows and c columns
+// Input values are in array a
 func New(a []float64, r, c int) [][]float64 {
 	m := make([][]float64, r)
 	for i := 0; i < r; i++ {
@@ -18,6 +23,7 @@ func New(a []float64, r, c int) [][]float64 {
 	return m
 }
 
+// NewIdentity returns a new identity matrix
 func NewIdentity() [][]float64 {
 	m := make([][]float64, 4)
 	for i := 0; i < 4; i++ {
@@ -79,4 +85,9 @@ func Transpose(m [][]float64) [][]float64 {
 		}
 	}
 	return res
+}
+
+// DeterminantTwoByTwo returns the determinant of a 2X2 matrix
+func DeterminantTwoByTwo(m [][]float64) float64 {
+	return math.Abs(m[0][0]*m[1][1] - m[0][1]*m[1][0])
 }
