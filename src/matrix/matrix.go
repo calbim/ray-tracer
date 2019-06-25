@@ -65,3 +65,18 @@ func MultiplyWithTuple(m [][]float64, t tuple.Tuple) tuple.Tuple {
 		W: m[3][0]*t.X + m[3][1]*t.Y + m[3][2]*t.Z + m[3][3]*t.W,
 	}
 }
+
+// Transpose computes the transpose of matrix
+// by swapping the rows and columns
+func Transpose(m [][]float64) [][]float64 {
+	res := make([][]float64, 4, 4)
+	for i := 0; i < 4; i++ {
+		res[i] = make([]float64, 4)
+	}
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			res[j][i] = m[i][j]
+		}
+	}
+	return res
+}

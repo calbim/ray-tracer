@@ -96,8 +96,8 @@ func TestMultiply(t *testing.T) {
 func TestMultiplyWithTuple(t *testing.T) {
 	m := New([]float64{1, 2, 3, 4, 2, 4, 4, 2, 8,
 		6, 4, 1, 0, 0, 0, 1}, 4, 4)
-	b := tuple.Tuple{1, 2, 3, 1}
-	if !tuple.Equals(MultiplyWithTuple(m, b), tuple.Tuple{18, 24, 33, 1}) {
+	b := tuple.Tuple{X: 1, Y: 2, Z: 3, W: 1}
+	if !tuple.Equals(MultiplyWithTuple(m, b), tuple.Tuple{X: 18, Y: 24, Z: 33, W: 1}) {
 		t.Errorf("Multiplication with tuple is incorrect")
 	}
 
@@ -106,8 +106,18 @@ func TestMultiplyWithTuple(t *testing.T) {
 func TestMultiplyWithIdentity(t *testing.T) {
 	m := New([]float64{0, 1, 2, 4, 1, 2, 4, 8,
 		2, 4, 8, 16, 4, 8, 16, 32}, 4, 4)
-	p := Multiply(m, NewIdentity())
-	if !Equals(p, m, 4, 4, 4, 4) {
+	expected := Multiply(m, NewIdentity())
+	if !Equals(m, expected, 4, 4, 4, 4) {
 		t.Errorf("Product of a matrix and identity matrix should be the original matrix")
+	}
+}
+
+func TestTranspose(t *testing.T) {
+	m := New([]float64{0, 9, 3, 0, 9, 8, 0, 8,
+		1, 8, 5, 3, 0, 0, 5, 8}, 4, 4)
+	expected := New([]float64{0, 9, 1, 0, 9, 8, 8,
+		0, 3, 0, 5, 5, 0, 8, 3, 8}, 4, 4)
+	if !Equals(Transpose(m), expected, 4, 4, 4, 4) {
+		t.Errorf("Transpose of matrix is incorrect")
 	}
 }
