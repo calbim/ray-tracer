@@ -1,5 +1,7 @@
 package matrix
 
+import "../tuple"
+
 // New Returns a new matrix with r rows and c columns
 func New(a []float64, r, c int) [][]float64 {
 	m := make([][]float64, r)
@@ -43,4 +45,14 @@ func Multiply(m, n [][]float64) [][]float64 {
 		}
 	}
 	return res
+}
+
+// MultiplyWithTuple returns the product of a matrix and tuple
+func MultiplyWithTuple(m [][]float64, t tuple.Tuple) tuple.Tuple {
+	return tuple.Tuple{
+		X: m[0][0]*t.X + m[0][1]*t.Y + m[0][2]*t.Z + m[0][3]*t.W,
+		Y: m[1][0]*t.X + m[1][1]*t.Y + m[1][2]*t.Z + m[1][3]*t.W,
+		Z: m[2][0]*t.X + m[2][1]*t.Y + m[2][2]*t.Z + m[2][3]*t.W,
+		W: m[3][0]*t.X + m[3][1]*t.Y + m[3][2]*t.Z + m[3][3]*t.W,
+	}
 }

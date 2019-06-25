@@ -1,6 +1,10 @@
 package matrix
 
-import "testing"
+import (
+	"testing"
+
+	"../tuple"
+)
 
 func TestMatrixConstruction(t *testing.T) {
 	m := New([]float64{1, 2, 3, 4, 5.5, 6.5, 7.5, 8.5,
@@ -87,4 +91,14 @@ func TestMultiply(t *testing.T) {
 		54, 114, 108, 40, 58, 110, 102, 16, 26, 46, 42}, 4, 4), 4, 4, 4, 4) {
 		t.Errorf("Multiplication is incorrect")
 	}
+}
+
+func TestMultiplyWithTuple(t *testing.T) {
+	m := New([]float64{1, 2, 3, 4, 2, 4, 4, 2, 8,
+		6, 4, 1, 0, 0, 0, 1}, 4, 4)
+	b := tuple.Tuple{1, 2, 3, 1}
+	if !tuple.Equals(MultiplyWithTuple(m, b), tuple.Tuple{18, 24, 33, 1}) {
+		t.Errorf("Multiplication with tuple is incorrect")
+	}
+
 }
