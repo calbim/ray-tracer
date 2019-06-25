@@ -91,3 +91,27 @@ func Transpose(m [][]float64) [][]float64 {
 func DeterminantTwoByTwo(m [][]float64) float64 {
 	return math.Abs(m[0][0]*m[1][1] - m[0][1]*m[1][0])
 }
+
+// Submatrix returns a copy of a given matrix with r rows and
+// c columns after deleting row rd and column cd for passed to it
+func Submatrix(m [][]float64, r, c, rd, cd int) [][]float64 {
+	res := make([]float64, (r-1)*(c-1))
+	k := 0
+	for i := 0; i < r; {
+		if i == rd {
+			i++
+		}
+		for j := 0; i < r && j < c; {
+			if j == cd {
+				j++
+			}
+			if j < c {
+				res[k] = m[i][j]
+				k++
+				j++
+			}
+		}
+		i++
+	}
+	return New(res, r-1, c-1)
+}

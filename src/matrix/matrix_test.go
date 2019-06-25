@@ -135,3 +135,19 @@ func TestTwoByTwoDeterminant(t *testing.T) {
 		t.Errorf("Determinant of 2X2 matrix should be 17, is %f", DeterminantTwoByTwo(m))
 	}
 }
+
+func TestSubmatrix(t *testing.T) {
+	m := New([]float64{1, 5, 0, -3, 2, 7, 0, 6, -3}, 3, 3)
+	n := Submatrix(m, 3, 3, 0, 2)
+	expected := New([]float64{-3, 2, 0, 6}, 2, 2)
+	if !Equals(n, expected, 2, 2, 2, 2) {
+		t.Errorf("Submatrix should be %v", expected)
+	}
+
+	m = New([]float64{-6, 1, 1, 6, -8, 5, 8, 6, 1, 0, 8, 2, -7, 1, -1, 1}, 4, 4)
+	n = Submatrix(m, 4, 4, 2, 1)
+	expected = New([]float64{-6, 1, 6, -8, 8, 6, -7, -1, 1}, 3, 3)
+	if !Equals(n, expected, 3, 3, 3, 3) {
+		t.Errorf("Submatrix should be %v but is %v", expected, n)
+	}
+}
