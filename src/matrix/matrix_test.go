@@ -121,3 +121,10 @@ func TestTranspose(t *testing.T) {
 		t.Errorf("Transpose of matrix is incorrect")
 	}
 }
+
+func TestIdentityTranspose(t *testing.T) {
+	m := NewIdentity()
+	if !Equals(Transpose(m), m, 4, 4, 4, 4) {
+		t.Errorf("Transpose of identity matrix is incorrect")
+	}
+}
