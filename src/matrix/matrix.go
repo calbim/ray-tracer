@@ -91,7 +91,10 @@ func Determinant(m [][]float64, N int) float64 {
 		return m[0][0]*m[1][1] - m[0][1]*m[1][0]
 	}
 	if N == 3 {
-		return m[0][0]*Cofactor(m, 0, 0) + m[0][1]*Cofactor(m, 0, 1) + m[0][2]*Cofactor(m, 0, 2)
+		return m[0][0]*Cofactor(m, 0, 0, 3) + m[0][1]*Cofactor(m, 0, 1, 3) + m[0][2]*Cofactor(m, 0, 2, 3)
+	}
+	if N == 4 {
+		return m[0][0]*Cofactor(m, 0, 0, 4) + m[0][1]*Cofactor(m, 0, 1, 4) + m[0][2]*Cofactor(m, 0, 2, 4) + m[0][3]*Cofactor(m, 0, 3, 4)
 	}
 	return 0
 }
@@ -122,14 +125,14 @@ func Submatrix(m [][]float64, r, c, rd, cd int) [][]float64 {
 }
 
 // Minor returns the minor computed at row i and column j
-// of a 3x3 matrix
-func Minor(m [][]float64, i, j int) float64 {
-	return Determinant(Submatrix(m, 3, 3, i, j), 2)
+// of a NxN matrix
+func Minor(m [][]float64, i, j, N int) float64 {
+	return Determinant(Submatrix(m, N, N, i, j), N-1)
 }
 
-// Cofactor computes the cofactor of a 3X3 matrix at (i,j)
-func Cofactor(m [][]float64, i, j int) float64 {
-	minor := Minor(m, i, j)
+// Cofactor computes the cofactor of a NxN matrix at (i,j)
+func Cofactor(m [][]float64, i, j, N int) float64 {
+	minor := Minor(m, i, j, N)
 	if (i+j)%2 == 0 {
 		return minor
 	}
