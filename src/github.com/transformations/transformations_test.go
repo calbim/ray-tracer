@@ -119,3 +119,36 @@ func TestZRotation(t *testing.T) {
 		t.Errorf("rotation for p %v is incorrect", p)
 	}
 }
+
+func TestShearing(t *testing.T) {
+	transform := NewShearing(1, 0, 0, 0, 0, 0)
+	p := tuple.Point(2, 3, 4)
+	if !tuple.Equals(matrix.MultiplyWithTuple(transform, p), tuple.Point(5, 3, 4)) {
+		t.Errorf("shearing transformation'moving x in proportion to y' for p %v is incorrect", p)
+	}
+	transform = NewShearing(0, 1, 0, 0, 0, 0)
+	p = tuple.Point(2, 3, 4)
+	if !tuple.Equals(matrix.MultiplyWithTuple(transform, p), tuple.Point(6, 3, 4)) {
+		t.Errorf("shearing transformation for p %v is incorrect", p)
+	}
+	transform = NewShearing(0, 0, 1, 0, 0, 0)
+	p = tuple.Point(2, 3, 4)
+	if !tuple.Equals(matrix.MultiplyWithTuple(transform, p), tuple.Point(2, 5, 4)) {
+		t.Errorf("shearing transformation for p %v is incorrect", p)
+	}
+	transform = NewShearing(0, 0, 0, 1, 0, 0)
+	p = tuple.Point(2, 3, 4)
+	if !tuple.Equals(matrix.MultiplyWithTuple(transform, p), tuple.Point(2, 7, 4)) {
+		t.Errorf("shearing transformation for p %v is incorrect", p)
+	}
+	transform = NewShearing(0, 0, 0, 0, 1, 0)
+	p = tuple.Point(2, 3, 4)
+	if !tuple.Equals(matrix.MultiplyWithTuple(transform, p), tuple.Point(2, 3, 6)) {
+		t.Errorf("shearing transformation for p %v is incorrect", p)
+	}
+	transform = NewShearing(0, 0, 0, 0, 0, 1)
+	p = tuple.Point(2, 3, 4)
+	if !tuple.Equals(matrix.MultiplyWithTuple(transform, p), tuple.Point(2, 3, 7)) {
+		t.Errorf("shearing transformation for p %v is incorrect", p)
+	}
+}

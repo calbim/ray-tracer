@@ -54,3 +54,13 @@ func RotationZ(r float64) [][]float64 {
 		0, 0, 0, 1,
 	}, 4, 4)
 }
+
+//NewShearing returns a matrix that represents a shearing (skew) operation
+func NewShearing(Xy, Xz, Yx, Yz, Zx, Zy float64) [][]float64 {
+	return matrix.New([]float64{
+		1, Xy, Xz, 0,
+		Yx, 1, Yz, 0,
+		Zx, Zy, 1, 0,
+		0, 0, 0, 1,
+	}, 4, 4)
+}
