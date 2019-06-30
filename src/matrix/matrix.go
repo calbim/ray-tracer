@@ -1,7 +1,10 @@
 package matrix
 
 import (
+	"errors"
+
 	"../tuple"
+	"../util"
 )
 
 // New Returns a new matrix with r rows and c columns
@@ -38,7 +41,7 @@ func Equals(a, b [][]float64, arow, acol, brow, bcol int) bool {
 	}
 	for i := 0; i < arow; i++ {
 		for j := 0; j < acol; j++ {
-			if a[i][j] != b[i][j] {
+			if !util.Equals(a[i][j], b[i][j]) {
 				return false
 			}
 		}
@@ -137,4 +140,25 @@ func Cofactor(m [][]float64, i, j, N int) float64 {
 		return minor
 	}
 	return -minor
+}
+
+// IsInvertible determines if a NxN is invertible
+func IsInvertible(m [][]float64, N int) bool {
+	return Determinant(m, N) != 0
+}
+
+// Inverse returns the inverse of a matrix
+func Inverse(m [][]float64, N int) ([][]float64, error) {
+	if !IsInvertible(m, N) {
+		return nil, errors.New("matrix is not invertible")
+	}
+	b := New([]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, N, N)
+	det := Determinant(m, N)
+	for i := 0; i < N; i++ {
+		for j := 0; j < N; j++ {
+			c := Cofactor(m, i, j, N)
+			b[j][i] = c / det
+		}
+	}
+	return b, nil
 }
