@@ -1,8 +1,6 @@
 package matrix
 
 import (
-	"math"
-
 	"../tuple"
 )
 
@@ -87,13 +85,20 @@ func Transpose(m [][]float64) [][]float64 {
 	return res
 }
 
-// DeterminantTwoByTwo returns the determinant of a 2X2 matrix
-func DeterminantTwoByTwo(m [][]float64) float64 {
-	return math.Abs(m[0][0]*m[1][1] - m[0][1]*m[1][0])
+// Determinant returns the determinant of a NxN matrix
+func Determinant(m [][]float64, N int) float64 {
+	if N == 2 {
+		return m[0][0]*m[1][1] - m[0][1]*m[1][0]
+	}
+	if N == 3 {
+		return m[0][0]*Cofactor(m, 0, 0) + m[0][1]*Cofactor(m, 0, 1) + m[0][2]*Cofactor(m, 0, 2)
+	}
+	return 0
 }
 
 // Submatrix returns a copy of a given matrix with r rows and
 // c columns after deleting row rd and column cd for passed to it
+// Submatrix of a NxN is a N-1xN-1 matrix
 func Submatrix(m [][]float64, r, c, rd, cd int) [][]float64 {
 	res := make([]float64, (r-1)*(c-1))
 	k := 0
@@ -114,4 +119,19 @@ func Submatrix(m [][]float64, r, c, rd, cd int) [][]float64 {
 		i++
 	}
 	return New(res, r-1, c-1)
+}
+
+// Minor returns the minor computed at row i and column j
+// of a 3x3 matrix
+func Minor(m [][]float64, i, j int) float64 {
+	return Determinant(Submatrix(m, 3, 3, i, j), 2)
+}
+
+// Cofactor computes the cofactor of a 3X3 matrix at (i,j)
+func Cofactor(m [][]float64, i, j int) float64 {
+	minor := Minor(m, i, j)
+	if (i+j)%2 == 0 {
+		return minor
+	}
+	return -minor
 }

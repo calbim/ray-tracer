@@ -129,10 +129,10 @@ func TestIdentityTranspose(t *testing.T) {
 	}
 }
 
-func TestTwoByTwoDeterminant(t *testing.T) {
+func TestDeterminant(t *testing.T) {
 	m := New([]float64{1, 5, -3, 2}, 2, 2)
-	if DeterminantTwoByTwo(m) != 17 {
-		t.Errorf("Determinant of 2X2 matrix should be 17, is %f", DeterminantTwoByTwo(m))
+	if Determinant(m, 2) != 17 {
+		t.Errorf("Determinant of 2X2 matrix should be 17, is %f", Determinant(m, 2))
 	}
 }
 
@@ -149,5 +149,36 @@ func TestSubmatrix(t *testing.T) {
 	expected = New([]float64{-6, 1, 6, -8, 8, 6, -7, -1, 1}, 3, 3)
 	if !Equals(n, expected, 3, 3, 3, 3) {
 		t.Errorf("Submatrix should be %v but is %v", expected, n)
+	}
+}
+
+func TestMinor(t *testing.T) {
+	m := New([]float64{3, 5, 0, 2, -1, -7, 6, -1, 5}, 3, 3)
+	b := Submatrix(m, 3, 3, 1, 0)
+	if Determinant(b, 2) != 25 {
+		t.Errorf("Determinant should be 25")
+	}
+	if Minor(m, 1, 0) != 25 {
+		t.Errorf("Minor should be 25")
+	}
+}
+
+func TestCofactor(t *testing.T) {
+	m := New([]float64{3, 5, 0, 2, -1, -7, 6, -1, 5}, 3, 3)
+	if Cofactor(m, 0, 0) != -12 {
+		t.Errorf("Cofactor is %f should be -12", Cofactor(m, 0, 0))
+	}
+	if Cofactor(m, 1, 0) != -25 {
+		t.Errorf("Cofactor should be -25")
+	}
+}
+
+func TestDeterminantThreeByThreeMatrix(t *testing.T) {
+	m := New([]float64{1, 2, 6, -5, 8, -4, 2, 6, 4}, 3, 3)
+	if Cofactor(m, 0, 0) != 56 || Cofactor(m, 0, 1) != 12 || Cofactor(m, 0, 2) != -46 {
+		t.Errorf("Cofactors are wrong")
+	}
+	if Determinant(m, 3) != -196 {
+		t.Errorf("Determinant is %f, should be %d", Determinant(m, 3), -196)
 	}
 }
