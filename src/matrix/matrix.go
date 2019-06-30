@@ -152,7 +152,7 @@ func Inverse(m [][]float64, N int) ([][]float64, error) {
 	if !IsInvertible(m, N) {
 		return nil, errors.New("matrix is not invertible")
 	}
-	b := New([]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, N, N)
+	b := New([]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, N, N)
 	det := Determinant(m, N)
 	for i := 0; i < N; i++ {
 		for j := 0; j < N; j++ {

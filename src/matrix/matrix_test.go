@@ -243,3 +243,16 @@ func TestInverse(t *testing.T) {
 		t.Errorf("Matrix should be %v\n, is %v", expected, b)
 	}
 }
+
+func TestMultipluMatrixWithInverse(t *testing.T) {
+	m := New([]float64{3, -9, 7, 3, 3, -8, 2, -9, -4, 4, 4, 1, -6, 5, -1, 1}, 4, 4)
+	b := New([]float64{8, 2, 2, 2, 3, -1, 7, 0, 7, 0, 5, 4, 6, -2, 0, 5}, 4, 4)
+	c := Multiply(m, b)
+	bInverse, err := Inverse(b, 4)
+	if err != nil {
+		t.Errorf("inverse of B is incorrect")
+	}
+	if !Equals(m, Multiply(c, bInverse), 4, 4, 4, 4) {
+		t.Errorf("if A*B = C, then A should = C * inverse(B)")
+	}
+}
