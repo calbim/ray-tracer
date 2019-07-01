@@ -152,3 +152,33 @@ func TestShearing(t *testing.T) {
 		t.Errorf("shearing transformation for p %v is incorrect", p)
 	}
 }
+
+func TestIndividualTransformation(t *testing.T) {
+	p := tuple.Point(1, 0, 1)
+	A := RotationX(Pi / 2)
+	B := NewScaling(5, 5, 5)
+	C := NewTranslation(10, 5, 7)
+	p2 := matrix.MultiplyWithTuple(A, p)
+	if !tuple.Equals(p2, tuple.Point(1, -1, 0)) {
+		t.Errorf("rotation is incorrect")
+	}
+	p3 := matrix.MultiplyWithTuple(B, p2)
+	if !tuple.Equals(p3, tuple.Point(5, -5, 0)) {
+		t.Errorf("scaling is incorrect")
+	}
+	p4 := matrix.MultiplyWithTuple(C, p3)
+	if !tuple.Equals(p4, tuple.Point(15, 0, 7)) {
+		t.Errorf("translation is incorrect")
+	}
+}
+
+func TestChainingTransformationsOrder(t *testing.T) {
+	p := tuple.Point(1, 0, 1)
+	A := RotationX(Pi / 2)
+	B := NewScaling(5, 5, 5)
+	C := NewTranslation(10, 5, 7)
+	T := matrix.Multiply(matrix.Multiply(C, B), A)
+	if !tuple.Equals(matrix.MultiplyWithTuple(T, p), tuple.Point(15, 0, 7)) {
+		t.Errorf("chained transformations are in the wrong order")
+	}
+}
