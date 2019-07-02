@@ -3,6 +3,8 @@ package sphere
 import (
 	"errors"
 
+	"../ray"
+	"../tuple"
 	uuid "github.com/nu7hatch/gouuid"
 )
 
@@ -20,4 +22,10 @@ func New() Sphere {
 	return Sphere{
 		id: id.String(),
 	}
+}
+
+// Intersect returns the points at which a ray intersects a sphere
+func Intersect(s Sphere, r ray.Ray) []float64 {
+	ray := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+	sphere := New()
 }
