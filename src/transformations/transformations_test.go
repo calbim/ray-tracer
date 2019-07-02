@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"../matrix"
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/matrix"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 func TestTranslation(t *testing.T) {

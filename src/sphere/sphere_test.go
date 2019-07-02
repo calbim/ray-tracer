@@ -3,8 +3,8 @@ package sphere
 import (
 	"testing"
 
-	"../ray"
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 func TestIntersectionTwoPoints(t *testing.T) {

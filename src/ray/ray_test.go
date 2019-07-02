@@ -3,14 +3,14 @@ package ray
 import (
 	"testing"
 
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 func TestRay(t *testing.T) {
 	o := tuple.Point(1, 2, 3)
 	d := tuple.Vector(4, 5, 6)
 	r := Ray{o, d}
-	if !tuple.Equals(r.origin, o) || !tuple.Equals(r.direction, d) {
+	if !tuple.Equals(r.Origin, o) || !tuple.Equals(r.Direction, d) {
 		t.Errorf("ray was not initiliazed correctly")
 	}
 }

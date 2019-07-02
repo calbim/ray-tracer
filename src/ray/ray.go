@@ -1,7 +1,7 @@
 package ray
 
 import (
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 // Ray starts from an origin and points towards a direction

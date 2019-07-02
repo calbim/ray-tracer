@@ -5,8 +5,8 @@ import (
 	"os"
 	"testing"
 
-	"../canvas"
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/canvas"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 func TestProjectile(t *testing.T) {

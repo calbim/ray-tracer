@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"../tuple"
-	"../util"
+	"github.com/calbim/ray-tracer/src/tuple"
+	"github.com/calbim/ray-tracer/src/util"
 )
 
 func TestMatrixConstruction(t *testing.T) {

@@ -1,7 +1,7 @@
 package projectile
 
 import (
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 //Projectile denotes the trajectory of an object in space

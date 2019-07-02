@@ -3,8 +3,8 @@ package sphere
 import (
 	"errors"
 
-	"../ray"
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/tuple"
 	uuid "github.com/nu7hatch/gouuid"
 )
 
@@ -25,7 +25,7 @@ func New() Sphere {
 }
 
 // Intersect returns the points at which a ray intersects a sphere
-func Intersect(s Sphere, r ray.Ray) []float64 {
-	ray := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
-	sphere := New()
-}
+// func Intersect(s Sphere, r ray.Ray) []float64 {
+// 	ray := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+// 	sphere := New()
+// }

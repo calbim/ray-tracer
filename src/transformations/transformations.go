@@ -3,7 +3,7 @@ package transformations
 import (
 	"math"
 
-	"../matrix"
+	"github.com/calbim/ray-tracer/src/matrix"
 )
 
 // Pi = 3.14

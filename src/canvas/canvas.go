@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"strings"
 
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 // Canvas represents a collection of pixels

@@ -3,7 +3,7 @@ package tuple
 import (
 	"testing"
 
-	"../util"
+	"github.com/calbim/ray-tracer/src/util"
 )
 
 func TestIsPoint(t *testing.T) {

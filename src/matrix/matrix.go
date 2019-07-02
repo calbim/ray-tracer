@@ -3,8 +3,8 @@ package matrix
 import (
 	"errors"
 
-	"../tuple"
-	"../util"
+	"github.com/calbim/ray-tracer/src/tuple"
+	"github.com/calbim/ray-tracer/src/util"
 )
 
 // New Returns a new matrix with r rows and c columns

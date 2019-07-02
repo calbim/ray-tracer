@@ -3,7 +3,7 @@ package tuple
 import (
 	"math"
 
-	"../util"
+	"github.com/calbim/ray-tracer/src/util"
 )
 
 // A Tuple is a set of coordinates (x,y,z) that represent a  point or direction in space.
