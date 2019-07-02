@@ -33,3 +33,12 @@ func TestRayMisses(t *testing.T) {
 		t.Errorf("Ray should miss sphere")
 	}
 }
+
+func TestRayInsideSphere(t *testing.T) {
+	s := New()
+	r := ray.Ray{Origin: tuple.Point(0, 0, 0), Direction: tuple.Vector(0, 0, 1)}
+	xs := Intersect(s, r)
+	if len(xs) != 2 || xs[0] != -1 || xs[1] != 1 {
+		t.Errorf("Ray should intersect sphere at 2 points")
+	}
+}
