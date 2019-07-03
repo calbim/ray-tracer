@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 func TestCanvas(t *testing.T) {

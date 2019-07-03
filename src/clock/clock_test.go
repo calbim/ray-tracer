@@ -5,10 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"../canvas"
-	"../matrix"
-	"../transformations"
-	"../tuple"
+	"github.com/calbim/ray-tracer/src/canvas"
+	"github.com/calbim/ray-tracer/src/matrix"
+	"github.com/calbim/ray-tracer/src/transformations"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 func TestDrawClock(t *testing.T) {
