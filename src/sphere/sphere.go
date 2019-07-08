@@ -55,3 +55,17 @@ func Intersect(s *Sphere, r ray.Ray) ([]intersections.Intersection, error) {
 
 	return intersections.Intersections(i1, i2), nil
 }
+
+//NormalAt returns the normal vector at point P on a sphere
+func NormalAt(s *Sphere, p tuple.Tuple) (*tuple.Tuple, error) {
+	inverse, err := matrix.Inverse(s.transformation, 4)
+	if err != nil {
+		return nil, errors.New("Could not compute object point for world point")
+	}
+	objectPoint := matrix.MultiplyWithTuple(inverse, p)
+	objectNormal := tuple.Subtract(objectPoint, tuple.Point(0, 0, 0))
+	worldNormal := matrix.MultiplyWithTuple(matrix.Transpose(inverse), objectNormal)
+	worldNormal.W = 0
+	normalized := tuple.Normalize(worldNormal)
+	return &normalized, nil
+}

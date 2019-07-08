@@ -1,6 +1,7 @@
 package sphere
 
 import (
+	"math"
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/matrix"
@@ -107,9 +108,9 @@ func TestChangeTransformation(t *testing.T) {
 }
 
 func TestIntersectScaledSphere(t *testing.T) {
-	r = ray.Ray{
-		Origin:tuple.Point(0, 0, -5), 
-		Direction:tuple.Vector(0, 0, 1),
+	r := ray.Ray{
+		Origin:    tuple.Point(0, 0, -5),
+		Direction: tuple.Vector(0, 0, 1),
 	}
 	s, err := New()
 	if err != nil {
@@ -125,5 +126,105 @@ func TestIntersectScaledSphere(t *testing.T) {
 	}
 	if xs[0].Value != 3 || xs[1].Value != 7 {
 		t.Errorf("Intersection points should be 3 and 7")
+	}
+}
+
+func TestNormalXAxis(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	n, err := NormalAt(s, tuple.Point(1, 0, 0))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Vector(1, 0, 0)) {
+		t.Errorf("Normal vector should be %v", tuple.Vector(1, 0, 0))
+	}
+}
+
+func TestNormalYAxis(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	n, err := NormalAt(s, tuple.Point(0, 1, 0))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Vector(0, 1, 0)) {
+		t.Errorf("Normal vector should be %v", tuple.Vector(0, 1, 0))
+	}
+}
+
+func TestNormalZAxis(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	n, err := NormalAt(s, tuple.Point(0, 0, 1))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Vector(0, 0, 1)) {
+		t.Errorf("Normal vector should be %v", tuple.Vector(0, 0, 1))
+	}
+}
+
+func TestNormalNonAxial(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	n, err := NormalAt(s, tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Vector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3)) {
+		t.Errorf("Normal vector should be %v", tuple.Vector(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	}
+}
+func TestNormalIsNormalized(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	n, err := NormalAt(s, tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Normalize(*n)) {
+		t.Errorf("Normal should be normalized")
+	}
+}
+
+func TestNormalForTranslatedSphere(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	SetTransform(s, transformations.NewTranslation(0, 1, 0))
+	n, err := NormalAt(s, tuple.Point(0, 1.70711, -0.70711))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Vector(0, 0.70711, -0.70711)) {
+		t.Errorf("Normal at point of translated sphere should be %v", tuple.Vector(0, 0.70711, -0.70711))
+	}
+}
+
+func TestNormalForTransformedSphere(t *testing.T) {
+	s, err := New()
+	if err != nil {
+		t.Errorf("Could not create sphere")
+	}
+	m := matrix.Multiply(transformations.NewScaling(1, 0.5, 1), transformations.RotationZ(math.Pi/5))
+	SetTransform(s, m)
+	n, err := NormalAt(s, tuple.Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
+	if err != nil {
+		t.Errorf("Error while computing normal")
+	}
+	if !tuple.Equals(*n, tuple.Vector(0, 0.97014, -0.24254)) {
+		t.Errorf("Normal should be %v", tuple.Vector(0, 0.97014, -0.24254))
 	}
 }
