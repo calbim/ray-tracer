@@ -84,11 +84,16 @@ func HadamardProduct(c1, c2 Tuple) Tuple {
 	}
 }
 
-// TupleEquals checks for the equality of two tuples
+//Equals checks for the equality of two tuples
 func Equals(t1, t2 Tuple) bool {
 	if util.Equals(t1.X, t2.X) && util.Equals(t1.Y, t2.Y) &&
 		util.Equals(t1.Z, t2.Z) && util.Equals(t1.W, t2.W) {
 		return true
 	}
 	return false
+}
+
+//Reflect returns the reflected vector corresponding to in around normal
+func Reflect(in, normal Tuple) Tuple {
+	return Subtract(in, MultiplyByScalar(normal, 2 * DotProduct(in, normal)))
 }

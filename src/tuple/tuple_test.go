@@ -1,6 +1,7 @@
 package tuple
 
 import (
+	"math"
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/util"
@@ -212,5 +213,23 @@ func TestHadamardProduct(t *testing.T) {
 	c2 := Color(0.9, 1, 0.1)
 	if !Equals(HadamardProduct(c1, c2), Color(0.9, 0.2, 0.04)) {
 		t.Errorf("Hadamard product of colours should be color(0.9, 0.2, 0.04)")
+	}
+}
+
+func TestReflectVectorAt45Degrees(t *testing.T) {
+	v := Vector(1, -1, 0)
+	n := Vector(0, 1, 0)
+	r := Reflect(v, n)
+	if !Equals(r, Vector(1, 1, 0)) {
+		t.Errorf("Reflected vector should be %v", Vector(1, 1, 0))
+	}
+}
+
+func TestReflectVectorSlantedSurface(t *testing.T) {
+	v := Vector(0, -1, 0)
+	n := Vector(math.Sqrt(2)/2, math.Sqrt(2)/2, 0)
+	r := Reflect(v, n)
+	if !Equals(r, Vector(1, 0, 0)) {
+		t.Errorf("Reflected vector should be %v", Vector(1, 0, 0))
 	}
 }
