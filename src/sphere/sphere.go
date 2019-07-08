@@ -6,6 +6,7 @@ import (
 
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/tuple"
+	"github.com/calbim/ray-tracer/src/intersections"
 	uuid "github.com/nu7hatch/gouuid"
 )
 
@@ -25,18 +26,18 @@ func New() Sphere {
 	}
 }
 
-
 // Intersect returns the points at which a ray intersects a sphere
-func Intersect(s Sphere, r ray.Ray) []float64 {
-	sphereToRay := tuple.Subtract(r.Origin, tuple.Point(0.0, 0.0,0.0))
+func Intersect(s Sphere, r ray.Ray) []intersections.Intersection {
+	sphereToRay := tuple.Subtract(r.Origin, tuple.Point(0.0, 0.0, 0.0))
 	a := tuple.DotProduct(r.Direction, r.Direction)
 	b := 2 * tuple.DotProduct(r.Direction, sphereToRay)
 	c := tuple.DotProduct(sphereToRay, sphereToRay) - 1
-	d := b*b - 4 * a * c
+	d := b*b - 4*a*c
 	if d < 0 {
-		return []float64{}
+		return []intersections.Intersection{}
 	}
-	t1:= (-b - math.Sqrt(d))/(2*a)
-	t2:= (-b + math.Sqrt(d))/(2*a)
-	return []float64{t1, t2}
+	i1 := intersections.Intersection{Value:(-b - math.Sqrt(d)) / (2 * a), Object:s}
+	i2 := intersections.Intersection{Value:(-b + math.Sqrt(d)) / (2 * a), Object:s}
+
+	return intersections.Intersections(i1,i2)
 }

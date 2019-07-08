@@ -11,7 +11,7 @@ func TestIntersectionTwoPoints(t *testing.T) {
 	s := New()
 	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
 	xs := Intersect(s, r)
-	if len(xs) != 2 || xs[0] != 4 || xs[1] != 6 {
+	if len(xs) != 2 || xs[0].Value != 4 || xs[1].Value != 6 {
 		t.Errorf("Ray should intersect sphere at distance %f and %f from the center", 4.0, 6.0)
 	}
 }
@@ -20,7 +20,7 @@ func TestIntersectionTangent(t *testing.T) {
 	s := New()
 	r := ray.Ray{Origin: tuple.Point(0, 1, -5), Direction: tuple.Vector(0, 0, 1)}
 	xs := Intersect(s, r)
-	if len(xs) != 2 || xs[0] != 5 || xs[1] != 5 {
+	if len(xs) != 2 || xs[0].Value != 5 || xs[1].Value != 5 {
 		t.Errorf("Ray should intersect sphere at distance %f and %f from the center", 5.0, 5.0)
 	}
 }
@@ -38,7 +38,7 @@ func TestRayInsideSphere(t *testing.T) {
 	s := New()
 	r := ray.Ray{Origin: tuple.Point(0, 0, 0), Direction: tuple.Vector(0, 0, 1)}
 	xs := Intersect(s, r)
-	if len(xs) != 2 || xs[0] != -1 || xs[1] != 1 {
+	if len(xs) != 2 || xs[0].Value != -1 || xs[1].Value != 1 {
 		t.Errorf("Ray should intersect sphere at 2 points")
 	}
 }
@@ -47,7 +47,7 @@ func TestSphereBehindRay(t *testing.T) {
 	s := New()
 	r := ray.Ray{Origin: tuple.Point(0, 0, 5), Direction: tuple.Vector(0, 0, 1)}
 	xs := Intersect(s, r)
-	if len(xs) != 2 || xs[0] != -6 || xs[1] != -4 {
+	if len(xs) != 2 || xs[0].Value != -6 || xs[1].Value != -4 {
 		t.Errorf("Ray should intersect sphere at 2 points")
 	}
 }
