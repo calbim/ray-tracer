@@ -24,7 +24,7 @@ func New(a []float64, r, c int) [][]float64 {
 	return m
 }
 
-// NewIdentity returns a new identity matrix
+// NewIdentity returns a new 4X4 identity matrix
 func NewIdentity() [][]float64 {
 	m := make([][]float64, 4)
 	for i := 0; i < 4; i++ {
@@ -152,7 +152,7 @@ func Inverse(m [][]float64, N int) ([][]float64, error) {
 	if !IsInvertible(m, N) {
 		return nil, errors.New("matrix is not invertible")
 	}
-	b := New([]float64{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, N, N)
+	b := New([]float64{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, N, N)
 	det := Determinant(m, N)
 	for i := 0; i < N; i++ {
 		for j := 0; j < N; j++ {
