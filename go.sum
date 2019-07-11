@@ -1,2 +1,6 @@
+github.com/ikgo/gocode v0.0.0-20180912135031-6e257e1c6842 h1:xEjS0/c3SJtqJZgoxJsB89FKwaYfWEgowP09Uf635dY=
+github.com/ikgo/gocode v0.0.0-20180912135031-6e257e1c6842/go.mod h1:/vQ5DCTq0XUco6jXwdF04kI1ek0jqRrI8YtYY1VJ+sY=
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d h1:VhgPp6v9qf9Agr/56bj7Y/xa04UccTW04VP0Qed4vnQ=
 github.com/nu7hatch/gouuid v0.0.0-20131221200532-179d4d0c4d8d/go.mod h1:YUTz3bUH2ZwIWBy3CJBeOBEugqcmXREj14T+iG/4k4U=
+golang.org/x/tools v0.0.0-20180831211245-7ca132754999 h1:mf2VYfMpSMTlp0I/UXrX13w5LejDx34QeUUHH4TrUA8=
+golang.org/x/tools v0.0.0-20180831211245-7ca132754999/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=

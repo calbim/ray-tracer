@@ -15,7 +15,7 @@ import (
 func TestSilhouette(t *testing.T) {
 	rayOrigin := tuple.Point(0, 0, -5)
 	c := canvas.New(100, 100)
-	color := tuple.Point(1, 0, 1)
+	color := tuple.Color(1,1,1)
 	shape, err := sphere.New()
 	if err != nil {
 		t.Errorf("Error while creating sphere")

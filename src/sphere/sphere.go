@@ -5,6 +5,7 @@ import (
 	"math"
 
 	"github.com/calbim/ray-tracer/src/intersections"
+	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/matrix"
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -15,6 +16,7 @@ import (
 type Sphere struct {
 	id             string
 	transformation [][]float64
+	material       material.Material
 }
 
 // New returns a new sphere
@@ -26,6 +28,7 @@ func New() (*Sphere, error) {
 	return &Sphere{
 		id:             id.String(),
 		transformation: matrix.NewIdentity(),
+		material: material.New(),
 	}, nil
 }
 

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/matrix"
+	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/transformations"
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -226,5 +227,29 @@ func TestNormalForTransformedSphere(t *testing.T) {
 	}
 	if !tuple.Equals(*n, tuple.Vector(0, 0.97014, -0.24254)) {
 		t.Errorf("Normal should be %v", tuple.Vector(0, 0.97014, -0.24254))
+	}
+}
+
+func TestSphereHasDefaultMaterial(t *testing.T){
+	s, err:=New()
+	if err != nil {
+		t.Errorf("Error while creating sphere %v", err)
+	}
+	m:=s.material
+	if m!=material.New(){
+		t.Errorf("A sphere should have a default material")
+	}
+}
+
+func TestAssignMaterialToSphere(t *testing.T){
+	s, err:=New()
+	if err != nil {
+		t.Errorf("Error while creating sphere %v", err)
+	}
+	m:=material.New()
+	m.Ambient = 1
+	s.material = m
+	if m!=s.material{
+		t.Errorf("Sphere material should be %v, but is %v", m, s.material)
 	}
 }
