@@ -1,11 +1,22 @@
 package intersections
 
-import "math"
+import (
+	"math"
+	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/tuple"
+)
 
-//Intersection encapsulates an object and the intersection point
+//Object interface
+type Object interface {
+	Intersect(ray.Ray) ([]Intersection, error)
+	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
+	SetTransform([][]float64)
+}
+
+// Intersection encapsulates an object and the intersection point
 type Intersection struct {
 	Value  float64
-	Object interface{}
+	Object Object
 }
 
 //Intersections returns a collection of intersection objects

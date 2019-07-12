@@ -4,8 +4,8 @@ import (
 	"math"
 	"testing"
 
-	"github.com/calbim/ray-tracer/src/matrix"
 	"github.com/calbim/ray-tracer/src/material"
+	"github.com/calbim/ray-tracer/src/matrix"
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/transformations"
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -17,7 +17,7 @@ func TestIntersectionTwoPoints(t *testing.T) {
 		t.Errorf("Could not create new sphere")
 	}
 	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
-	xs, err := Intersect(s, r)
+	xs, err := s.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while calculating intersection")
 	}
@@ -32,7 +32,7 @@ func TestIntersectionTangent(t *testing.T) {
 		t.Errorf("Could not create new sphere")
 	}
 	r := ray.Ray{Origin: tuple.Point(0, 1, -5), Direction: tuple.Vector(0, 0, 1)}
-	xs, err := Intersect(s, r)
+	xs, err := s.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while calculating intersection")
 	}
@@ -47,7 +47,7 @@ func TestRayMisses(t *testing.T) {
 		t.Errorf("Could not create new sphere")
 	}
 	r := ray.Ray{Origin: tuple.Point(0, 2, -5), Direction: tuple.Vector(0, 0, 1)}
-	xs, err := Intersect(s, r)
+	xs, err := s.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while calculating intersection")
 	}
@@ -62,7 +62,7 @@ func TestRayInsideSphere(t *testing.T) {
 		t.Errorf("Could not create new sphere")
 	}
 	r := ray.Ray{Origin: tuple.Point(0, 0, 0), Direction: tuple.Vector(0, 0, 1)}
-	xs, err := Intersect(s, r)
+	xs, err := s.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while calculating intersection")
 	}
@@ -77,7 +77,7 @@ func TestSphereBehindRay(t *testing.T) {
 		t.Errorf("Could not create new sphere")
 	}
 	r := ray.Ray{Origin: tuple.Point(0, 0, 5), Direction: tuple.Vector(0, 0, 1)}
-	xs, err := Intersect(s, r)
+	xs, err := s.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while calculating intersection")
 	}
@@ -102,7 +102,7 @@ func TestChangeTransformation(t *testing.T) {
 		t.Errorf("Could not create new sphere")
 	}
 	transformation := transformations.NewTranslation(2, 3, 4)
-	SetTransform(s, transformation)
+	s.SetTransform(transformation)
 	if !matrix.Equals(s.transformation, transformation, 4, 4, 4, 4) {
 		t.Errorf("Transformation for sphere should be %v", transformation)
 	}
@@ -117,8 +117,8 @@ func TestIntersectScaledSphere(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create new sphere")
 	}
-	SetTransform(s, transformations.NewScaling(2, 2, 2))
-	xs, err := Intersect(s, r)
+	s.SetTransform(transformations.NewScaling(2, 2, 2))
+	xs, err := s.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while calculating intersection")
 	}
@@ -135,7 +135,7 @@ func TestNormalXAxis(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere")
 	}
-	n, err := NormalAt(s, tuple.Point(1, 0, 0))
+	n, err := s.NormalAt(tuple.Point(1, 0, 0))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -149,7 +149,7 @@ func TestNormalYAxis(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere")
 	}
-	n, err := NormalAt(s, tuple.Point(0, 1, 0))
+	n, err := s.NormalAt(tuple.Point(0, 1, 0))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -163,7 +163,7 @@ func TestNormalZAxis(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere")
 	}
-	n, err := NormalAt(s, tuple.Point(0, 0, 1))
+	n, err := s.NormalAt(tuple.Point(0, 0, 1))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -177,7 +177,7 @@ func TestNormalNonAxial(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere")
 	}
-	n, err := NormalAt(s, tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	n, err := s.NormalAt(tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -190,7 +190,7 @@ func TestNormalIsNormalized(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere")
 	}
-	n, err := NormalAt(s, tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	n, err := s.NormalAt(tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -204,8 +204,8 @@ func TestNormalForTranslatedSphere(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere")
 	}
-	SetTransform(s, transformations.NewTranslation(0, 1, 0))
-	n, err := NormalAt(s, tuple.Point(0, 1.70711, -0.70711))
+	s.SetTransform(transformations.NewTranslation(0, 1, 0))
+	n, err := s.NormalAt(tuple.Point(0, 1.70711, -0.70711))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -220,8 +220,8 @@ func TestNormalForTransformedSphere(t *testing.T) {
 		t.Errorf("Could not create sphere")
 	}
 	m := matrix.Multiply(transformations.NewScaling(1, 0.5, 1), transformations.RotationZ(math.Pi/5))
-	SetTransform(s, m)
-	n, err := NormalAt(s, tuple.Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
+	s.SetTransform(m)
+	n, err := s.NormalAt(tuple.Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
 	if err != nil {
 		t.Errorf("Error while computing normal")
 	}
@@ -230,26 +230,26 @@ func TestNormalForTransformedSphere(t *testing.T) {
 	}
 }
 
-func TestSphereHasDefaultMaterial(t *testing.T){
-	s, err:=New()
+func TestSphereHasDefaultMaterial(t *testing.T) {
+	s, err := New()
 	if err != nil {
 		t.Errorf("Error while creating sphere %v", err)
 	}
-	m:=s.material
-	if m!=material.New(){
+	m := s.Material
+	if m != material.New() {
 		t.Errorf("A sphere should have a default material")
 	}
 }
 
-func TestAssignMaterialToSphere(t *testing.T){
-	s, err:=New()
+func TestAssignMaterialToSphere(t *testing.T) {
+	s, err := New()
 	if err != nil {
 		t.Errorf("Error while creating sphere %v", err)
 	}
-	m:=material.New()
+	m := material.New()
 	m.Ambient = 1
-	s.material = m
-	if m!=s.material{
-		t.Errorf("Sphere material should be %v, but is %v", m, s.material)
+	s.Material = m
+	if m != s.Material {
+		t.Errorf("Sphere material should be %v, but is %v", m, s.Material)
 	}
 }

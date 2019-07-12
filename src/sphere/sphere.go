@@ -16,7 +16,7 @@ import (
 type Sphere struct {
 	id             string
 	transformation [][]float64
-	material       material.Material
+	Material       material.Material
 }
 
 // New returns a new sphere
@@ -28,18 +28,17 @@ func New() (*Sphere, error) {
 	return &Sphere{
 		id:             id.String(),
 		transformation: matrix.NewIdentity(),
-		material: material.New(),
+		Material:       material.New(),
 	}, nil
 }
 
 // SetTransform sets given transform for sphere
-func SetTransform(s *Sphere, t [][]float64) *Sphere {
+func (s *Sphere) SetTransform(t [][]float64) {
 	s.transformation = t
-	return s
 }
 
 // Intersect returns the points at which a ray intersects a sphere
-func Intersect(s *Sphere, r ray.Ray) ([]intersections.Intersection, error) {
+func (s *Sphere) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 	inverse, err := matrix.Inverse(s.transformation, 4)
 	if err != nil {
 		return nil, errors.New("Could not invert sphere's transformation matrix")
@@ -53,14 +52,14 @@ func Intersect(s *Sphere, r ray.Ray) ([]intersections.Intersection, error) {
 	if d < 0 {
 		return []intersections.Intersection{}, nil
 	}
-	i1 := intersections.Intersection{Value: (-b - math.Sqrt(d)) / (2 * a), Object: *s}
-	i2 := intersections.Intersection{Value: (-b + math.Sqrt(d)) / (2 * a), Object: *s}
+	i1 := intersections.Intersection{Value: (-b - math.Sqrt(d)) / (2 * a), Object: s}
+	i2 := intersections.Intersection{Value: (-b + math.Sqrt(d)) / (2 * a), Object: s}
 
 	return intersections.Intersections(i1, i2), nil
 }
 
 //NormalAt returns the normal vector at point P on a sphere
-func NormalAt(s *Sphere, p tuple.Tuple) (*tuple.Tuple, error) {
+func (s *Sphere) NormalAt(p tuple.Tuple) (*tuple.Tuple, error) {
 	inverse, err := matrix.Inverse(s.transformation, 4)
 	if err != nil {
 		return nil, errors.New("Could not compute object point for world point")

@@ -2,23 +2,38 @@ package intersections
 
 import (
 	"testing"
+	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/tuple"
 )
+type dummy struct {
 
+}
+
+func (d dummy) NormalAt(t tuple.Tuple)(*tuple.Tuple, error) {
+	return &tuple.Tuple{}, nil
+}
+
+func (d dummy) Intersect(r ray.Ray)([]Intersection, error){
+	return nil, nil
+}
+
+func  (d dummy)SetTransform([][]float64){
+}
 func TestIntersectionObject(t *testing.T) {
-	var sphere interface{}
-	i := Intersection{3.5, sphere}
+	d:=dummy{}
+	i := Intersection{3.5, d}
 	if i.Value != 3.5 {
 		t.Errorf("The intersection point should be %f", 3.5)
 	}
-	if i.Object != sphere {
-		t.Errorf("The intersected object should be %v", sphere)
+	if i.Object != d {
+		t.Errorf("The intersected object should be %v", d)
 	}
 }
 
 func TestIntersectionCollection(t *testing.T) {
-	var sphere interface{}
-	i1 := Intersection{1, sphere}
-	i2 := Intersection{2, sphere}
+	d:=dummy{}
+	i1 := Intersection{1, d}
+	i2 := Intersection{2, d}
 	xs := Intersections(i1, i2)
 	if len(xs) != 2 {
 		t.Errorf("Number of intersections should be 2")
@@ -29,9 +44,9 @@ func TestIntersectionCollection(t *testing.T) {
 }
 
 func TestHitAllPositive(t *testing.T) {
-	var sphere interface{}
-	i1 := Intersection{1, sphere}
-	i2 := Intersection{2, sphere}
+	d:=dummy{}
+	i1 := Intersection{1, d}
+	i2 := Intersection{2, d}
 	xs := Intersections(i1, i2)
 	i := Hit(xs)
 	if *i != i1 {
@@ -40,9 +55,9 @@ func TestHitAllPositive(t *testing.T) {
 }
 
 func TestHitSomePositive(t *testing.T) {
-	var sphere interface{}
-	i1 := Intersection{-1, sphere}
-	i2 := Intersection{1, sphere}
+	d:=dummy{}
+	i1 := Intersection{-1, d}
+	i2 := Intersection{1, d}
 	xs := Intersections(i1, i2)
 	i := Hit(xs)
 	if *i != i2 {
@@ -51,9 +66,9 @@ func TestHitSomePositive(t *testing.T) {
 }
 
 func TestHitAllNegative(t *testing.T) {
-	var sphere interface{}
-	i1 := Intersection{-2, sphere}
-	i2 := Intersection{-1, sphere}
+	d:=dummy{}
+	i1 := Intersection{-2, d}
+	i2 := Intersection{-1, d}
 	xs := Intersections(i1, i2)
 	i := Hit(xs)
 	if i != nil {
@@ -62,11 +77,11 @@ func TestHitAllNegative(t *testing.T) {
 }
 
 func TestHitMultipleIntersections(t *testing.T) {
-	var sphere interface{}
-	i1 := Intersection{5,sphere}
-	i2 := Intersection{7,sphere}
-	i3 := Intersection{-3,sphere}
-	i4 := Intersection{2,sphere}
+	d:=dummy{}
+	i1 := Intersection{5,d}
+	i2 := Intersection{7,d}
+	i3 := Intersection{-3,d}
+	i4 := Intersection{2,d}
 	xs := Intersections(i1,i2,i3,i4)
 	i := Hit(xs)
 	if *i != i4 {
