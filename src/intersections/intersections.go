@@ -2,13 +2,13 @@ package intersections
 
 import (
 	"math"
-	"github.com/calbim/ray-tracer/src/ray"
+
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 //Object interface
 type Object interface {
-	Intersect(ray.Ray) ([]Intersection, error)
+	//Intersect(ray.Ray) ([]Intersection, error)
 	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
 	SetTransform([][]float64)
 }

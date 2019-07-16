@@ -15,7 +15,7 @@ import (
 // Sphere represents a unique sphere
 type Sphere struct {
 	id             string
-	transformation [][]float64
+	Transformation [][]float64
 	Material       material.Material
 }
 
@@ -27,19 +27,19 @@ func New() (*Sphere, error) {
 	}
 	return &Sphere{
 		id:             id.String(),
-		transformation: matrix.NewIdentity(),
+		Transformation: matrix.NewIdentity(),
 		Material:       material.New(),
 	}, nil
 }
 
 // SetTransform sets given transform for sphere
 func (s *Sphere) SetTransform(t [][]float64) {
-	s.transformation = t
+	s.Transformation = t
 }
 
 // Intersect returns the points at which a ray intersects a sphere
 func (s *Sphere) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
-	inverse, err := matrix.Inverse(s.transformation, 4)
+	inverse, err := matrix.Inverse(s.Transformation, 4)
 	if err != nil {
 		return nil, errors.New("Could not invert sphere's transformation matrix")
 	}
@@ -60,7 +60,7 @@ func (s *Sphere) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 
 //NormalAt returns the normal vector at point P on a sphere
 func (s *Sphere) NormalAt(p tuple.Tuple) (*tuple.Tuple, error) {
-	inverse, err := matrix.Inverse(s.transformation, 4)
+	inverse, err := matrix.Inverse(s.Transformation, 4)
 	if err != nil {
 		return nil, errors.New("Could not compute object point for world point")
 	}
