@@ -11,7 +11,7 @@ import (
 
 //Object interface
 type Object interface {
-	Intersect(ray.Ray) ([]Intersection, error)
+	Intersect(ray.Ray) ([]float64, error)
 	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
 	SetTransform([][]float64)
 }
@@ -64,11 +64,24 @@ func NormalAt(o Object, p tuple.Tuple) (*tuple.Tuple, error) {
 	return o.NormalAt(p)
 }
 
+// Intersect returns the intersections of object o with ray r
+func Intersect(o Object, r ray.Ray) ([]Intersection, error) {
+	points, err := o.Intersect(r)
+	if err != nil {
+		return nil, fmt.Errorf("Could not find intersection points due to error %v", err)
+	}
+	intersections := []Intersection{}
+	for _, val := range points {
+		intersections = append(intersections, Intersection{Value: val, Object: o})
+	}
+	return intersections, nil
+}
+
 // PrepareComputations calculates the Computation object for an intersection
 func PrepareComputations(i Intersection, r ray.Ray) (*Computation, error) {
 	tValue := i.Value
 	object := i.Object
-	point:=  ray.Position(r, tValue)
+	point := ray.Position(r, tValue)
 	normal, err := NormalAt(object, point)
 	if err != nil {
 		return nil, fmt.Errorf("Could not calculate computation because of error %v", err)

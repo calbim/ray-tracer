@@ -4,7 +4,6 @@ import (
 	"errors"
 	"math"
 
-	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/matrix"
 	"github.com/calbim/ray-tracer/src/ray"
@@ -38,7 +37,7 @@ func (s *Sphere) SetTransform(t [][]float64) {
 }
 
 // Intersect returns the points at which a ray intersects a sphere
-func (s *Sphere) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
+func (s *Sphere) Intersect(r ray.Ray) ([]float64, error) {
 	inverse, err := matrix.Inverse(s.Transformation, 4)
 	if err != nil {
 		return nil, errors.New("Could not invert sphere's transformation matrix")
@@ -48,14 +47,15 @@ func (s *Sphere) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 	a := tuple.DotProduct(r.Direction, r.Direction)
 	b := 2 * tuple.DotProduct(r.Direction, sphereToRay)
 	c := tuple.DotProduct(sphereToRay, sphereToRay) - 1
+	points := []float64{}
 	d := b*b - 4*a*c
 	if d < 0 {
-		return []intersections.Intersection{}, nil
+		return points, nil
 	}
-	i1 := intersections.Intersection{Value: (-b - math.Sqrt(d)) / (2 * a), Object: s}
-	i2 := intersections.Intersection{Value: (-b + math.Sqrt(d)) / (2 * a), Object: s}
+	points = append(points, (-b-math.Sqrt(d))/(2*a))
+	points = append(points, (-b+math.Sqrt(d))/(2*a))
 
-	return intersections.Intersections(i1, i2), nil
+	return points, nil
 }
 
 //NormalAt returns the normal vector at point P on a sphere

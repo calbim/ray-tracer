@@ -54,7 +54,7 @@ func (a ByIntersectionValue) Less(i, j int) bool { return a[i].Value < a[j].Valu
 func (w World) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 	list := []intersections.Intersection{}
 	for _, o := range w.Objects {
-		intersection, err := o.Intersect(r)
+		intersection, err := intersections.Intersect(o, r)
 		if err != nil {
 			return nil, fmt.Errorf("Error while computing intersection for object %v", err)
 		}

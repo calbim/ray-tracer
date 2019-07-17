@@ -18,7 +18,7 @@ func TestSilhouette(t *testing.T) {
 	rayOrigin := tuple.Point(0, 0, -5)
 	c := canvas.New(200, 200)
 	shape, err := sphere.New()
-	shape.Material.Color = tuple.Color(1, 0.2, 1)
+	shape.Material.Color = tuple.Color(0, 0.2, 1)
 	light := light.PointLight{Intensity: tuple.Color(1, 1, 1), Position: tuple.Point(-10, 10, -10)}
 	if err != nil {
 		t.Errorf("Error while creating sphere")
@@ -33,7 +33,7 @@ func TestSilhouette(t *testing.T) {
 			worldX := float64(-half + pixelSize*float64(x))
 			position := tuple.Point(worldX, worldY, wallZ)
 			r := ray.Ray{Origin: rayOrigin, Direction: tuple.Normalize(tuple.Subtract(position, rayOrigin))}
-			xs, err := shape.Intersect(r)
+			xs, err := intersections.Intersect(shape, r)
 			if err != nil {
 				t.Errorf("Error while calculating intersection")
 			}
