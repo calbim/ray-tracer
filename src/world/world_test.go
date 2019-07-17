@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/calbim/ray-tracer/src/ray"
+
 	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
@@ -48,6 +50,24 @@ func TestDefaultWorld(t *testing.T) {
 		t.Errorf("World should contain objects s1 %v and s2 %v but contains %v and %v", s1, s2, w.Objects[0], w.Objects[1])
 	}
 
+}
+
+func TestWorldIntersect(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error while creating world %v", err)
+	}
+	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+	xs, err := w.Intersect(r)
+	if err != nil {
+		t.Errorf("Error while intersection world with ray %v", err)
+	}
+	if len(xs) != 4 {
+		t.Errorf("Expect 4 points of intersections, got %v", len(xs))
+	}
+	if xs[0].Value != 4 || xs[1].Value != 4.5 || xs[2].Value != 5.5 || xs[3].Value != 6 {
+		t.Errorf("Expected interesection points to be 4,4.5,5,6, got %v", xs)
+	}
 }
 
 func contains(list []intersections.Object, s *sphere.Sphere) (bool, error) {

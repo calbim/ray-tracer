@@ -1,14 +1,17 @@
 package intersections
 
 import (
+	"fmt"
 	"math"
+
+	"github.com/calbim/ray-tracer/src/ray"
 
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
 //Object interface
 type Object interface {
-	//Intersect(ray.Ray) ([]Intersection, error)
+	Intersect(ray.Ray) ([]Intersection, error)
 	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
 	SetTransform([][]float64)
 }
@@ -17,6 +20,15 @@ type Object interface {
 type Intersection struct {
 	Value  float64
 	Object Object
+}
+
+// Computation object that contains more data about an intersection
+type Computation struct {
+	Value  float64 // t value
+	Object Object
+	Point  tuple.Tuple
+	Eyev   tuple.Tuple
+	Normal tuple.Tuple
 }
 
 //Intersections returns a collection of intersection objects
@@ -45,4 +57,29 @@ func Hit(intersections []Intersection) *Intersection {
 		return nil
 	}
 	return &intersections[index]
+}
+
+// NormalAt returns the normal for the underlying object at point p
+func NormalAt(o Object, p tuple.Tuple) (*tuple.Tuple, error) {
+	return o.NormalAt(p)
+}
+
+// PrepareComputations calculates the Computation object for an intersection
+func PrepareComputations(i Intersection, r ray.Ray) (*Computation, error) {
+	tValue := i.Value
+	object := i.Object
+	point:=  ray.Position(r, tValue)
+	normal, err := NormalAt(object, point)
+	if err != nil {
+		return nil, fmt.Errorf("Could not calculate computation because of error %v", err)
+	}
+
+	comps := Computation{
+		Value:  tValue,
+		Object: object,
+		Point:  point,
+		Eyev:   tuple.Negate(r.Direction),
+		Normal: *normal,
+	}
+	return &comps, nil
 }

@@ -19,7 +19,7 @@ type Sphere struct {
 	Material       material.Material
 }
 
-// New returns a new sphere
+// New returns a new sphere centered at the origin and with radius 1 unit
 func New() (*Sphere, error) {
 	id, err := uuid.NewV4()
 	if err != nil {

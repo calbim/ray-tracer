@@ -91,7 +91,7 @@ func TestDefaultTransformation(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create new sphere")
 	}
-	if !matrix.Equals(s.transformation, matrix.NewIdentity(), 4, 4, 4, 4) {
+	if !matrix.Equals(s.Transformation, matrix.NewIdentity(), 4, 4, 4, 4) {
 		t.Errorf("Default transformation for sphere should be identity matrix")
 	}
 }
@@ -103,7 +103,7 @@ func TestChangeTransformation(t *testing.T) {
 	}
 	transformation := transformations.NewTranslation(2, 3, 4)
 	s.SetTransform(transformation)
-	if !matrix.Equals(s.transformation, transformation, 4, 4, 4, 4) {
+	if !matrix.Equals(s.Transformation, transformation, 4, 4, 4, 4) {
 		t.Errorf("Transformation for sphere should be %v", transformation)
 	}
 }

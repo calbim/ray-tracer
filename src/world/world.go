@@ -2,6 +2,10 @@ package world
 
 import (
 	"errors"
+	"fmt"
+	"sort"
+
+	"github.com/calbim/ray-tracer/src/ray"
 
 	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/light"
@@ -36,4 +40,26 @@ func NewDefault() (*World, error) {
 	s2.SetTransform(transformations.NewScaling(0.5, 0.5, 0.5))
 	w.Objects = []intersections.Object{s1, s2}
 	return &w, nil
+}
+
+// ByIntersectionValue implements sort.Interface for []Intersection based on
+// the Value field.
+type ByIntersectionValue []intersections.Intersection
+
+func (a ByIntersectionValue) Len() int           { return len(a) }
+func (a ByIntersectionValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByIntersectionValue) Less(i, j int) bool { return a[i].Value < a[j].Value }
+
+//Intersect returns a list of intersections in sorted order when a ray passes through a world
+func (w World) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
+	list := []intersections.Intersection{}
+	for _, o := range w.Objects {
+		intersection, err := o.Intersect(r)
+		if err != nil {
+			return nil, fmt.Errorf("Error while computing intersection for object %v", err)
+		}
+		list = append(list, intersection...)
+	}
+	sort.Sort(ByIntersectionValue(list))
+	return list, nil
 }
