@@ -29,6 +29,7 @@ type Computation struct {
 	Point  tuple.Tuple
 	Eyev   tuple.Tuple
 	Normal tuple.Tuple
+	Inside bool
 }
 
 //Intersections returns a collection of intersection objects
@@ -83,6 +84,13 @@ func PrepareComputations(i Intersection, r ray.Ray) (*Computation, error) {
 	object := i.Object
 	point := ray.Position(r, tValue)
 	normal, err := NormalAt(object, point)
+	eyev := tuple.Negate(r.Direction)
+	inside := false
+	if tuple.DotProduct(*normal, eyev) < 0 {
+		inside = true
+		tmp := tuple.Negate(*normal)
+		normal = &tmp
+	}
 	if err != nil {
 		return nil, fmt.Errorf("Could not calculate computation because of error %v", err)
 	}
@@ -91,8 +99,9 @@ func PrepareComputations(i Intersection, r ray.Ray) (*Computation, error) {
 		Value:  tValue,
 		Object: object,
 		Point:  point,
-		Eyev:   tuple.Negate(r.Direction),
+		Eyev:   eyev,
 		Normal: *normal,
+		Inside: inside,
 	}
 	return &comps, nil
 }

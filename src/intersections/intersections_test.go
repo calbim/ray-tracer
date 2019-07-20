@@ -130,3 +130,50 @@ func TestPrepareComputations(t *testing.T) {
 		t.Errorf("Computation normal should be %v, but it is %v", tuple.Point(0, 0, -1), comps.Normal)
 	}
 }
+
+func TestInsideFlagWhenIntersectionInside(t *testing.T) {
+	r := ray.Ray{
+		Origin:    tuple.Point(0, 0, -5),
+		Direction: tuple.Vector(0, 0, 1),
+	}
+	shape, err := sphere.New()
+	if err != nil {
+		t.Errorf("Could not create sphere due to %v", err)
+	}
+	i := Intersection{Value: 4.0, Object: shape}
+	comps, err := PrepareComputations(i, r)
+	if err != nil {
+		t.Errorf("Could not prepare computations due to %v", err)
+	}
+	if comps.Inside != true {
+		t.Errorf("Hit should occur inside the object")
+	}
+}
+
+func TestHitWhenIntersectionInside(t *testing.T) {
+	r := ray.Ray{
+		Origin:    tuple.Point(0, 0, 0),
+		Direction: tuple.Vector(0, 0, 1),
+	}
+	shape, err := sphere.New()
+	if err != nil {
+		t.Errorf("Could not create sphere due to %v", err)
+	}
+	i := Intersection{Value: 1.0, Object: shape}
+	comps, err := PrepareComputations(i, r)
+	if err != nil {
+		t.Errorf("Could not prepare computations due to %v", err)
+	}
+	if comps.Inside != true {
+		t.Errorf("Hit should occur inside the object")
+	}
+	if comps.Point != tuple.Point(0, 0, 1) {
+		t.Errorf("Point should be %v, is %v", comps.Point, tuple.Point(0, 0, 1))
+	}
+	if comps.Eyev != tuple.Point(0, 0, -1) {
+		t.Errorf("Eyev should be %v, is %v", comps.Point, tuple.Point(0, 0, -1))
+	}
+	if comps.Normal != tuple.Point(0, 0, -1) {
+		t.Errorf("Normalv should be %v, is %v", comps.Point, tuple.Point(0, 0, -1))
+	}
+}
