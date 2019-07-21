@@ -3,6 +3,8 @@ package transformations
 import (
 	"math"
 
+	"github.com/calbim/ray-tracer/src/tuple"
+
 	"github.com/calbim/ray-tracer/src/matrix"
 )
 
@@ -63,4 +65,17 @@ func NewShearing(Xy, Xz, Yx, Yz, Zx, Zy float64) [][]float64 {
 		Zx, Zy, 1, 0,
 		0, 0, 0, 1,
 	}, 4, 4)
+}
+
+//ViewTransform returns a matrix that represents view parameters
+func ViewTransform(from tuple.Tuple, to tuple.Tuple, up tuple.Tuple) [][]float64 {
+	forward := tuple.Normalize(tuple.Subtract(to, from))
+	left := tuple.CrossProduct(forward, tuple.Normalize(up))
+	trueUp := tuple.CrossProduct(left, forward)
+	orientation := matrix.New([]float64{
+		left.X, left.Y, left.Z, 0,
+		trueUp.X, trueUp.Y, trueUp.Z, 0,
+		-forward.X, -forward.Y, -forward.Z, 0,
+		0, 0, 0, 1}, 4, 4)
+	return matrix.Multiply(orientation, NewTranslation(-from.X, -from.Y, -from.Z))
 }

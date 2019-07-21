@@ -119,18 +119,6 @@ func TestColorWhenRayMisses(t *testing.T) {
 	}
 }
 
-func TestColorWhenRayHits(t *testing.T) {
-	w, err := NewDefault()
-	if err != nil {
-		t.Errorf("Error %v creating world", err)
-	}
-	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
-	c, err := ColorAt(*w, r)
-	if *c != tuple.Color(0, 0, 0) {
-		t.Errorf("When a ray fails to intersect an object, the colour returned should be black")
-	}
-}
-
 func TestDefaultColorWhenRayHits(t *testing.T) {
 	w, err := NewDefault()
 	if err != nil {

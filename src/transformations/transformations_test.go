@@ -182,3 +182,48 @@ func TestChainingTransformationsOrder(t *testing.T) {
 		t.Errorf("chained transformations are in the wrong order")
 	}
 }
+
+func TestTransformationMatrixforDefaultOrientation(t *testing.T) {
+	from := tuple.Point(0, 0, 0)
+	to := tuple.Point(0, 0, -1)
+	up := tuple.Vector(0, 1, 0)
+	transform := ViewTransform(from, to, up)
+	if !matrix.Equals(transform, matrix.NewIdentity(), 4, 4, 4, 4) {
+		t.Errorf("Default orientation should be identity matrix but it is %v", transform)
+	}
+}
+
+func TestTransformationMatrixforPositiveZAxis(t *testing.T) {
+	from := tuple.Point(0, 0, 0)
+	to := tuple.Point(0, 0, 1)
+	up := tuple.Vector(0, 1, 0)
+	transform := ViewTransform(from, to, up)
+	if !matrix.Equals(transform, NewScaling(-1, 1, -1), 4, 4, 4, 4) {
+		t.Errorf("Transform should be %v but it is %v", NewScaling(-1, 1, -1), transform)
+	}
+}
+
+func TestTransformationMovestheWorld(t *testing.T) {
+	from := tuple.Point(0, 0, 8)
+	to := tuple.Point(0, 0, 0)
+	up := tuple.Vector(0, 1, 0)
+	transform := ViewTransform(from, to, up)
+	if !matrix.Equals(transform, NewTranslation(0, 0, -8), 4, 4, 4, 4) {
+		t.Errorf("Transform should be %v but it is %v", NewTranslation(0, 0, -8), transform)
+	}
+}
+
+func TestArbitraryTransformation(t *testing.T) {
+	from := tuple.Point(1, 3, 2)
+	to := tuple.Point(4, -2, 8)
+	up := tuple.Vector(1, 1, 0)
+	transform := ViewTransform(from, to, up)
+	expected := matrix.New([]float64{
+		-0.50709, 0.50709, 0.67612, -2.36643,
+		0.76772, 0.60609, 0.12122, -2.82843,
+		-0.35857, 0.59761, -0.71714, 0.00000,
+		0, 0, 0, 1}, 4, 4)
+	if !matrix.Equals(transform, expected, 4, 4, 4, 4) {
+		t.Errorf("Transform should be %v but it is %v", NewTranslation(0, 0, -8), expected)
+	}
+}
