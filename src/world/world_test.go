@@ -26,8 +26,9 @@ func TestDefaultWorld(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create new world %v", err)
 	}
-	light := light.PointLight{Intensity: tuple.Point(-10, -10, -10), Position: tuple.Point(1, 1, 1)}
-	m := material.Material{Color: tuple.Color(0.8, 1.0, 0.6), Diffuse: 0.7, Specular: 0.2}
+	light := light.PointLight{Position: tuple.Point(-10, 10, -10), Intensity: tuple.Color(1, 1, 1)}
+
+	m := material.Material{Color: tuple.Color(0.8, 1.0, 0.6), Diffuse: 0.7, Specular: 0.2, Ambient: 0.1, Shininess: 200}
 	s1, err := sphere.New()
 	if err != nil {
 		t.Errorf("Could not create sphere s1")
@@ -38,7 +39,7 @@ func TestDefaultWorld(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not create sphere s2")
 	}
-	s2.Material = m
+	s2.Material = material.New()
 	s2.SetTransform(transformations.NewScaling(0.5, 0.5, 0.5))
 
 	if *w.Light != light {
@@ -57,7 +58,7 @@ func TestWorldIntersect(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error while creating world %v", err)
 	}
-	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+	r := ray.Ray{Origin: tuple.Point(0.0, 0.0, -5.0), Direction: tuple.Vector(0.0, 0.0, 1.0)}
 	xs, err := w.Intersect(r)
 	if err != nil {
 		t.Errorf("Error while intersection world with ray %v", err)
@@ -67,6 +68,42 @@ func TestWorldIntersect(t *testing.T) {
 	}
 	if xs[0].Value != 4 || xs[1].Value != 4.5 || xs[2].Value != 5.5 || xs[3].Value != 6 {
 		t.Errorf("Expected interesection points to be 4,4.5,5,6, got %v", xs)
+	}
+}
+
+func TestShadingIntersection(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+	shape := w.Objects[0]
+	i := intersections.Intersection{Value: 4.0, Object: shape}
+	comps, err := intersections.PrepareComputations(i, r)
+	if err != nil {
+		t.Error("Error preparing computations", err)
+	}
+	c := ShadeHit(w, *comps)
+	if !tuple.Equals(c, tuple.Color(0.38066, 0.47583, 0.2855)) {
+		t.Errorf("Shade of Hit should be %v, but it is %v", tuple.Color(0.38066, 0.47583, 0.2855), c)
+	}
+}
+func TestShadingIntersectionInside(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	w.Light = &light.PointLight{Intensity: tuple.Color(1, 1, 1), Position: tuple.Point(0, 0.25, 0)}
+	r := ray.Ray{Origin: tuple.Point(0, 0, 0), Direction: tuple.Vector(0, 0, 1)}
+	shape := w.Objects[1]
+	i := intersections.Intersection{Value: 0.5, Object: shape}
+	comps, err := intersections.PrepareComputations(i, r)
+	if err != nil {
+		t.Error("Error preparing computations", err)
+	}
+	c := ShadeHit(w, *comps)
+	if !tuple.Equals(c, tuple.Color(0.90498, 0.90498, 0.90498)) {
+		t.Errorf("Shade of Hit should be %v, but it is %v", tuple.Color(0.90498, 0.90498, 0.90498), c)
 	}
 }
 

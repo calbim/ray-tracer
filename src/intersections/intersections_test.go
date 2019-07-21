@@ -131,7 +131,7 @@ func TestPrepareComputations(t *testing.T) {
 	}
 }
 
-func TestInsideFlagWhenIntersectionInside(t *testing.T) {
+func TestInsideFlagWhenIntersectionOutside(t *testing.T) {
 	r := ray.Ray{
 		Origin:    tuple.Point(0, 0, -5),
 		Direction: tuple.Vector(0, 0, 1),
@@ -145,8 +145,8 @@ func TestInsideFlagWhenIntersectionInside(t *testing.T) {
 	if err != nil {
 		t.Errorf("Could not prepare computations due to %v", err)
 	}
-	if comps.Inside != true {
-		t.Errorf("Hit should occur inside the object")
+	if comps.Inside == true {
+		t.Errorf("Hit should occur outside the object")
 	}
 }
 
@@ -170,10 +170,10 @@ func TestHitWhenIntersectionInside(t *testing.T) {
 	if comps.Point != tuple.Point(0, 0, 1) {
 		t.Errorf("Point should be %v, is %v", comps.Point, tuple.Point(0, 0, 1))
 	}
-	if comps.Eyev != tuple.Point(0, 0, -1) {
+	if comps.Eyev != tuple.Vector(0, 0, -1) {
 		t.Errorf("Eyev should be %v, is %v", comps.Point, tuple.Point(0, 0, -1))
 	}
-	if comps.Normal != tuple.Point(0, 0, -1) {
+	if comps.Normal != tuple.Vector(0, 0, -1) {
 		t.Errorf("Normalv should be %v, is %v", comps.Point, tuple.Point(0, 0, -1))
 	}
 }

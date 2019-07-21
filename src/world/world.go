@@ -24,18 +24,22 @@ type World struct {
 //NewDefault creates a world with a default config of one light source and two spheres
 func NewDefault() (*World, error) {
 	w := World{
-		Light: &light.PointLight{Intensity: tuple.Point(-10, -10, -10), Position: tuple.Point(1, 1, 1)},
+		Light: &light.PointLight{Position: tuple.Point(-10, 10, -10), Intensity: tuple.Color(1, 1, 1)},
 	}
-	m := material.Material{Color: tuple.Color(0.8, 1.0, 0.6), Diffuse: 0.7, Specular: 0.2}
 	s1, err := sphere.New()
 	if err != nil {
 		return nil, errors.New("Could not create a sphere")
 	}
-	s1.Material = m
 	s2, err := sphere.New()
 	if err != nil {
 		return nil, errors.New("Could not create a sphere")
 	}
+	m := material.New()
+	s1M := m
+	s1M.Color = tuple.Color(0.8, 1.0, 0.6)
+	s1M.Diffuse = 0.7
+	s1M.Specular = 0.2
+	s1.Material = s1M
 	s2.Material = m
 	s2.SetTransform(transformations.NewScaling(0.5, 0.5, 0.5))
 	w.Objects = []intersections.Object{s1, s2}
@@ -62,4 +66,10 @@ func (w World) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 	}
 	sort.Sort(ByIntersectionValue(list))
 	return list, nil
+}
+
+//ShadeHit computes the color of an intersection in a world
+func ShadeHit(w *World, comp intersections.Computation) tuple.Tuple {
+	return material.Lighting(comp.Object.GetMaterial(), *w.Light,
+		comp.Point, comp.Eyev, comp.Normal)
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/ray"
 
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -11,6 +12,7 @@ import (
 
 //Object interface
 type Object interface {
+	GetMaterial() material.Material
 	Intersect(ray.Ray) ([]float64, error)
 	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
 	SetTransform([][]float64)
@@ -63,6 +65,11 @@ func Hit(intersections []Intersection) *Intersection {
 // NormalAt returns the normal for the underlying object at point p
 func NormalAt(o Object, p tuple.Tuple) (*tuple.Tuple, error) {
 	return o.NormalAt(p)
+}
+
+// Material returns the object's material
+func Material(o Object) material.Material {
+	return o.GetMaterial()
 }
 
 // Intersect returns the intersections of object o with ray r
