@@ -13,6 +13,7 @@ import (
 //Object interface
 type Object interface {
 	GetMaterial() material.Material
+	SetMaterial(material.Material)
 	Intersect(ray.Ray) ([]float64, error)
 	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
 	SetTransform([][]float64)
@@ -70,6 +71,11 @@ func NormalAt(o Object, p tuple.Tuple) (*tuple.Tuple, error) {
 // Material returns the object's material
 func Material(o Object) material.Material {
 	return o.GetMaterial()
+}
+
+//SetMaterial sets material m in object o
+func SetMaterial(o Object, m material.Material) {
+	o.SetMaterial(m)
 }
 
 // Intersect returns the intersections of object o with ray r

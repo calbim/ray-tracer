@@ -69,7 +69,28 @@ func (w World) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 }
 
 //ShadeHit computes the color of an intersection in a world
-func ShadeHit(w *World, comp intersections.Computation) tuple.Tuple {
+func ShadeHit(w World, comp intersections.Computation) tuple.Tuple {
 	return material.Lighting(comp.Object.GetMaterial(), *w.Light,
 		comp.Point, comp.Eyev, comp.Normal)
+}
+
+//ColorAt returns the color of the intersection of ray r with world w
+func ColorAt(w World, r ray.Ray) (*tuple.Tuple, error) {
+	ints, err := w.Intersect(r)
+	if err != nil {
+		{
+			return nil, errors.New("Error finding intersections of world with ray")
+		}
+	}
+	hit := intersections.Hit(ints)
+	color := tuple.Color(0, 0, 0)
+	if hit == nil {
+		return &color, nil
+	}
+	comps, err := intersections.PrepareComputations(*hit, r)
+	if err != nil {
+		return nil, fmt.Errorf("Error while preparing computations %v", err)
+	}
+	shade := ShadeHit(w, *comps)
+	return &shade, nil
 }

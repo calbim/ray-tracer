@@ -41,6 +41,11 @@ func (s *Sphere) GetMaterial() material.Material {
 	return s.Material
 }
 
+// SetMaterial returns the material of the sphere
+func (s *Sphere) SetMaterial(m material.Material) {
+	s.Material = m
+}
+
 // Intersect returns the points at which a ray intersects a sphere
 func (s *Sphere) Intersect(r ray.Ray) ([]float64, error) {
 	inverse, err := matrix.Inverse(s.Transformation, 4)

@@ -83,7 +83,7 @@ func TestShadingIntersection(t *testing.T) {
 	if err != nil {
 		t.Error("Error preparing computations", err)
 	}
-	c := ShadeHit(w, *comps)
+	c := ShadeHit(*w, *comps)
 	if !tuple.Equals(c, tuple.Color(0.38066, 0.47583, 0.2855)) {
 		t.Errorf("Shade of Hit should be %v, but it is %v", tuple.Color(0.38066, 0.47583, 0.2855), c)
 	}
@@ -101,9 +101,66 @@ func TestShadingIntersectionInside(t *testing.T) {
 	if err != nil {
 		t.Error("Error preparing computations", err)
 	}
-	c := ShadeHit(w, *comps)
+	c := ShadeHit(*w, *comps)
 	if !tuple.Equals(c, tuple.Color(0.90498, 0.90498, 0.90498)) {
 		t.Errorf("Shade of Hit should be %v, but it is %v", tuple.Color(0.90498, 0.90498, 0.90498), c)
+	}
+}
+
+func TestColorWhenRayMisses(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 1, 0)}
+	c, err := ColorAt(*w, r)
+	if *c != tuple.Color(0, 0, 0) {
+		t.Errorf("When a ray fails to intersect an object, the colour returned should be black")
+	}
+}
+
+func TestColorWhenRayHits(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+	c, err := ColorAt(*w, r)
+	if *c != tuple.Color(0, 0, 0) {
+		t.Errorf("When a ray fails to intersect an object, the colour returned should be black")
+	}
+}
+
+func TestDefaultColorWhenRayHits(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
+	c, err := ColorAt(*w, r)
+	if !tuple.Equals(*c, tuple.Color(0.38066, 0.47583, 0.2855)) {
+		t.Errorf("Default colour for when a ray  to intersects an object should be %v", tuple.Color(0.38066, 0.47583, 0.2855))
+	}
+}
+
+func TestColorWhenIntersectionIsBehindRay(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	m := w.Objects[0].GetMaterial()
+	m.Ambient = 1
+	outer := w.Objects[0]
+	outer.SetMaterial(m)
+	inner := w.Objects[1]
+	mInner := inner.GetMaterial()
+	mInner.Ambient = 1
+	inner.SetMaterial(mInner)
+
+	r := ray.Ray{Origin: tuple.Point(0, 0, 0.075), Direction: tuple.Vector(0, 0, -1)}
+	c, err := ColorAt(*w, r)
+	if !tuple.Equals(*c, inner.GetMaterial().Color) {
+		t.Errorf("Intersection color should be %v but is %v", inner.GetMaterial().Color, c)
 	}
 }
 
