@@ -13,7 +13,7 @@ import (
 type Canvas struct {
 	width  int
 	height int
-	pixels [][]tuple.Tuple
+	Pixels [][]tuple.Tuple
 }
 
 // New returns a new Canvas with width w and height h
@@ -29,7 +29,7 @@ func New(w, h int) Canvas {
 
 // WritePixel writes pixel p at position width x, height y on a canvas c
 func WritePixel(c *Canvas, x int, y int, p tuple.Tuple) {
-	c.pixels[y][x] = p
+	c.Pixels[y][x] = p
 }
 
 // ToPPM returns the PPM string representation of a canvas
@@ -41,7 +41,7 @@ func ToPPM(c Canvas) string {
 	length := 0
 	for i := 0; i < c.height; i++ {
 		for j := 0; j < c.width; j++ {
-			pix := ToPixel(c.pixels[i][j])
+			pix := ToPixel(c.Pixels[i][j])
 			b.WriteString(pix)
 			length = length + len(pix)
 			if length > 56 {

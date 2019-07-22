@@ -2,7 +2,12 @@ package camera
 
 import (
 	"errors"
+	"fmt"
 	"math"
+
+	"github.com/calbim/ray-tracer/src/canvas"
+
+	"github.com/calbim/ray-tracer/src/world"
 
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -60,6 +65,25 @@ func RayForPixel(c Camera, x, y int) (*ray.Ray, error) {
 		Origin:    origin,
 		Direction: direction,
 	}, nil
+}
+
+//Render renders the world with a camera
+func (c Camera) Render(w world.World) (*canvas.Canvas, error) {
+	image := canvas.New(int(c.HSize), int(c.VSize))
+	for y := 0; y < int(c.VSize); y++ {
+		for x := 0; x < int(c.HSize); x++ {
+			r, err := RayForPixel(c, x, y)
+			if err != nil {
+				return nil, fmt.Errorf("Could not find ray for pixel due to error %v", err)
+			}
+			color, err := world.ColorAt(w, *r)
+			if err != nil {
+				return nil, fmt.Errorf("Could not find color at ray due to error %v", err)
+			}
+			canvas.WritePixel(&image, x, y, *color)
+		}
+	}
+	return &image, nil
 }
 
 func pixelSize(hSize int, vSize int, fieldOfView float64) float64 {

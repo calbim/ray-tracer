@@ -4,6 +4,8 @@ import (
 	"math"
 	"testing"
 
+	"github.com/calbim/ray-tracer/src/world"
+
 	"github.com/calbim/ray-tracer/src/transformations"
 
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -85,5 +87,24 @@ func TestConstructRayWhenCameraIsTransformed(t *testing.T) {
 	}
 	if !tuple.Equals(r.Direction, tuple.Vector(math.Sqrt(2)/2, 0, -math.Sqrt(2)/2)) {
 		t.Errorf("Ray vector should be %v, but it is %v", tuple.Vector(math.Sqrt(2)/2, 0, -math.Sqrt(2)/2), r.Direction)
+	}
+}
+
+func TestRender(t *testing.T) {
+	w, err := world.NewDefault()
+	if err != nil {
+		t.Errorf("Error creating world %v", err)
+	}
+	c := New(11, 11, math.Pi/2)
+	from := tuple.Point(0, 0, -5)
+	to := tuple.Point(0, 0, 0)
+	up := tuple.Vector(0, 1, 0)
+	c.Transform = transformations.ViewTransform(from, to, up)
+	image, err := c.Render(*w)
+	if err != nil {
+		t.Errorf("Error rendering image due to error %v", err)
+	}
+	if !tuple.Equals(image.Pixels[5][5], tuple.Color(0.38066, 0.47583, 0.2855)) {
+		t.Errorf("Colour of pixel at 5,5 should be %v, but it is %v", tuple.Color(0.38066, 0.47583, 0.2855), image.Pixels[5][5])
 	}
 }

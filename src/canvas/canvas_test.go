@@ -15,7 +15,7 @@ func TestCanvas(t *testing.T) {
 	}
 	for i := 0; i < c.height; i++ {
 		for j := 0; j < c.width; j++ {
-			if !tuple.Equals(c.pixels[i][j], tuple.Color(0, 0, 0)) {
+			if !tuple.Equals(c.Pixels[i][j], tuple.Color(0, 0, 0)) {
 				t.Errorf("Every pixel of a new canvas should be black")
 			}
 		}
@@ -26,7 +26,7 @@ func TestWriteToCanvas(t *testing.T) {
 	c := New(10, 20)
 	r := tuple.Color(1, 0, 0)
 	WritePixel(&c, 2, 3, r)
-	if !tuple.Equals(c.pixels[3][2], r) {
+	if !tuple.Equals(c.Pixels[3][2], r) {
 		t.Errorf("Pixel at width 2 amd height 3 should be red")
 	}
 }
