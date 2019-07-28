@@ -28,13 +28,13 @@ func New() Material {
 }
 
 //Lighting returns the shade an observer sees
-func Lighting(material Material, light light.PointLight, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple) tuple.Tuple {
+func Lighting(material Material, light light.PointLight, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) tuple.Tuple {
 	effectiveColor := tuple.HadamardProduct(light.Intensity, material.Color)
 	lightv := tuple.Normalize(tuple.Subtract(light.Position, point))
 	ambient := tuple.MultiplyByScalar(effectiveColor, material.Ambient)
 	lightDotNormal := tuple.DotProduct(lightv, normalv)
 	diffuse, specular := tuple.Color(0, 0, 0), tuple.Color(0, 0, 0)
-	if lightDotNormal >= 0 {
+	if lightDotNormal >= 0 && !inShadow {
 		diffuse = tuple.MultiplyByScalar(effectiveColor, material.Diffuse*lightDotNormal)
 		reflectv := tuple.Reflect(tuple.Negate(lightv), normalv)
 		reflectDotEye := tuple.DotProduct(reflectv, eyev)

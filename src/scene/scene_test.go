@@ -61,8 +61,8 @@ func TestRenderScene(t *testing.T) {
 	}
 	middle.SetTransform(transformations.NewTranslation(-0.5, 1, 0.5))
 	middle.SetMaterial(material.New())
-	middle.Material.Color = tuple.Color(0.1, 1, 0.5)
-	middle.Material.Diffuse = 0.7
+	middle.Material.Color = tuple.ColorFromHex("f6abb6ff")
+	middle.Material.Diffuse = 0.9
 	middle.Material.Specular = 0.3
 
 	right, err := sphere.New()
@@ -70,22 +70,22 @@ func TestRenderScene(t *testing.T) {
 		t.Errorf("Error %v creating right sphere", err)
 	}
 	transform = transformations.NewScaling(0.5, 0.5, 0.5)
-	right.SetTransform(matrix.Multiply(transformations.NewTranslation(1.5, 0.5, -0.5), transform))
+	right.SetTransform(matrix.Multiply(transformations.NewTranslation(1.5, 0.5, -0.75), transform))
 	right.SetMaterial(material.New())
-	right.Material.Color = tuple.Color(0.5, 1, 0.1)
-	right.Material.Diffuse = 0.7
-	right.Material.Specular = 0.3
+	right.Material.Color = tuple.ColorFromHex("ff4785ff")
+	right.Material.Diffuse = 1
+	right.Material.Specular = 0.4
 
 	left, err := sphere.New()
 	if err != nil {
 		t.Errorf("Error %v creating left sphere", err)
 	}
-	transform = transformations.NewScaling(0.33, 0.33, 0.33)
-	left.SetTransform(matrix.Multiply(transformations.NewTranslation(-1.5, 0.33, -0.75), transform))
+	transform = transformations.NewScaling(0.6, 0.6, 0.6)
+	left.SetTransform(matrix.Multiply(transformations.NewTranslation(-1.5, 0.5, -0.75), transform))
 	left.SetMaterial(material.New())
-	left.Material.Color = tuple.Color(1, 0.8, 1)
-	right.Material.Diffuse = 0.7
-	right.Material.Specular = 0.3
+	left.Material.Color = tuple.ColorFromHex("a64263ff")
+	left.Material.Diffuse = 0.85
+	left.Material.Specular = 0.6
 
 	w := world.World{}
 	w.Objects = []intersections.Object{floor, leftWall, rightWall, middle, right, left}
@@ -94,8 +94,8 @@ func TestRenderScene(t *testing.T) {
 	}
 	w.Light = &light.PointLight{Position: tuple.Point(-10, 10, -10), Intensity: tuple.Color(1, 1, 1)}
 
-	camera := camera.New(500, 250, math.Pi/3)
-	camera.Transform = transformations.ViewTransform(tuple.Point(0, 1.5, -5), tuple.Point(0, 1, 0), tuple.Vector(0, 1, 0))
+	camera := camera.New(3000, 1500, math.Pi/3)
+	camera.Transform = transformations.ViewTransform(tuple.Point(4, 5, -5), tuple.Point(0, 1, 0), tuple.Vector(0, 1, 0))
 	image, err := camera.Render(w)
 	if err != nil {
 		t.Errorf("Error while rendering camera to world %v", err)

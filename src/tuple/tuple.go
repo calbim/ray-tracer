@@ -77,6 +77,12 @@ func Color(r, b, g float64) Tuple {
 	return Tuple{r, b, g, 0}
 }
 
+// ColorFromHex returns a tuple that denotes a hex colour
+func ColorFromHex(hex string) Tuple {
+	rgb := util.HexToRGB(hex)
+	return Color(rgb[0], rgb[1], rgb[2])
+}
+
 // HadamardProduct is what you do to blend two colors
 func HadamardProduct(c1, c2 Tuple) Tuple {
 	return Tuple{
@@ -95,5 +101,5 @@ func Equals(t1, t2 Tuple) bool {
 
 //Reflect returns the reflected vector corresponding to in around normal
 func Reflect(in, normal Tuple) Tuple {
-	return Subtract(in, MultiplyByScalar(normal, 2 * DotProduct(in, normal)))
+	return Subtract(in, MultiplyByScalar(normal, 2*DotProduct(in, normal)))
 }

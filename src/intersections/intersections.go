@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/calbim/ray-tracer/src/util"
+
 	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/ray"
 
@@ -27,12 +29,13 @@ type Intersection struct {
 
 // Computation object that contains more data about an intersection
 type Computation struct {
-	Value  float64 // t value
-	Object Object
-	Point  tuple.Tuple
-	Eyev   tuple.Tuple
-	Normal tuple.Tuple
-	Inside bool
+	Value     float64 // t value
+	Object    Object
+	Point     tuple.Tuple
+	Overpoint tuple.Tuple
+	Eyev      tuple.Tuple
+	Normal    tuple.Tuple
+	Inside    bool
 }
 
 //Intersections returns a collection of intersection objects
@@ -109,12 +112,13 @@ func PrepareComputations(i Intersection, r ray.Ray) (*Computation, error) {
 	}
 
 	comps := Computation{
-		Value:  tValue,
-		Object: object,
-		Point:  point,
-		Eyev:   eyev,
-		Normal: *normal,
-		Inside: inside,
+		Value:     tValue,
+		Object:    object,
+		Point:     point,
+		Overpoint: tuple.Add(point, tuple.MultiplyByScalar(*normal, util.Eps)),
+		Eyev:      eyev,
+		Normal:    *normal,
+		Inside:    inside,
 	}
 	return &comps, nil
 }

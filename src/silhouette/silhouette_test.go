@@ -45,7 +45,7 @@ func TestSilhouette(t *testing.T) {
 					t.Errorf("Could not find normal at point %v on sphere", p)
 				}
 				eyev := tuple.Negate(r.Direction)
-				color := material.Lighting(shape.Material, light, p, eyev, *normalv)
+				color := material.Lighting(shape.Material, light, p, eyev, *normalv, false)
 				canvas.WritePixel(&c, x, y, color)
 			}
 		}

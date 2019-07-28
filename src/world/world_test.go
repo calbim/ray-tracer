@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/util"
 
 	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/light"
@@ -107,6 +108,38 @@ func TestShadingIntersectionInside(t *testing.T) {
 	}
 }
 
+func TestShadeHitWhenIntersectionIsInShadow(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	w.Light = &light.PointLight{
+		Intensity: tuple.Color(1, 1, 1),
+		Position:  tuple.Point(0, 0, -10),
+	}
+	s1, err := sphere.New()
+	if err != nil {
+		t.Errorf("Error %v while creating sphere", err)
+	}
+	w.Objects = append(w.Objects, s1)
+	s2, err := sphere.New()
+	if err != nil {
+		t.Errorf("Error %v while creating sphere", err)
+	}
+	s2.SetTransform(transformations.NewTranslation(0, 0, 10))
+	w.Objects = append(w.Objects, s2)
+	r := ray.Ray{Origin: tuple.Point(0, 0, 5), Direction: tuple.Vector(0, 0, 1)}
+	i := intersections.Intersection{Value: 4, Object: s2}
+	comps, err := intersections.PrepareComputations(i, r)
+	if err != nil {
+		t.Errorf("Error %v while preparing computation", err)
+	}
+	c := ShadeHit(*w, *comps)
+	if !tuple.Equals(c, tuple.Color(0.1, 0.1, 0.1)) {
+		t.Errorf("Color of hit should be %v but it is %v", tuple.Color(0.1, 0.1, 0.1), c)
+	}
+}
+
 func TestColorWhenRayMisses(t *testing.T) {
 	w, err := NewDefault()
 	if err != nil {
@@ -149,6 +182,86 @@ func TestColorWhenIntersectionIsBehindRay(t *testing.T) {
 	c, err := ColorAt(*w, r)
 	if !tuple.Equals(*c, inner.GetMaterial().Color) {
 		t.Errorf("Intersection color should be %v but is %v", inner.GetMaterial().Color, c)
+	}
+}
+
+func TestNoShadowWhenNothingIsCollinearWithPointAndLight(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	p := tuple.Point(0, 10, 0)
+	shadow, err := w.IsShadowed(p)
+	if err != nil {
+		t.Errorf("Error while determining if point is shadowed")
+	}
+	if shadow {
+		t.Errorf("There should be no shadow")
+	}
+}
+
+func TestShadowPointIsBetweenObjectAndLight(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	p := tuple.Point(10, -10, 10)
+	shadow, err := w.IsShadowed(p)
+	if err != nil {
+		t.Errorf("Error while determining if point is shadowed")
+	}
+	if !shadow {
+		t.Errorf("There should be a shadow")
+	}
+}
+
+func TestNoShadowWhenObjectIsBehindLight(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	p := tuple.Point(-20, 20, -20)
+	shadow, err := w.IsShadowed(p)
+	if err != nil {
+		t.Errorf("Error while determining if point is shadowed")
+	}
+	if shadow {
+		t.Errorf("There should be no shadow")
+	}
+}
+
+func TestNoShadowWhenObjectIsBehindPoint(t *testing.T) {
+	w, err := NewDefault()
+	if err != nil {
+		t.Errorf("Error %v creating world", err)
+	}
+	p := tuple.Point(-2, 2, -2)
+	shadow, err := w.IsShadowed(p)
+	if err != nil {
+		t.Errorf("Error while determining if point is shadowed")
+	}
+	if shadow {
+		t.Errorf("There should be no shadow")
+	}
+}
+
+func TestHitShouldOffsetThePoint(t *testing.T) {
+	r := ray.Ray{
+		Origin:    tuple.Point(0, 0, -5),
+		Direction: tuple.Vector(0, 0, 1),
+	}
+	s, err := sphere.New()
+	if err != nil {
+		t.Errorf("Error while creating sphere %v", err)
+	}
+	s.SetTransform(transformations.NewTranslation(0, 0, 1))
+	i := intersections.Intersection{5, s}
+	comps, err := intersections.PrepareComputations(i, r)
+	if err != nil {
+		t.Errorf("Error while preparing computation due to %v", err)
+	}
+	if comps.Overpoint.Z >= -util.Eps/2 || comps.Point.Z <= comps.Overpoint.Z {
+		t.Errorf("Overpoint should be a little less 0 and actual intersection point")
 	}
 }
 
