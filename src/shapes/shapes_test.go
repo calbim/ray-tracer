@@ -1,6 +1,7 @@
 package shapes
 
 import (
+	"math"
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/ray"
@@ -83,11 +84,24 @@ func TestTranslatedShape(t *testing.T) {
 func TestNormalOnTranslatedSphere(t *testing.T) {
 	s := NewTestShape()
 	s.SetTransform(transformations.NewTranslation(0, 1, 0))
-	n, err := s.Normal(tuple.Point(0, 0.70711, -1.70711))
+	n, err := Normal(s, tuple.Point(0, 1.70711, -0.70711))
 	if err != nil {
 		t.Errorf("Could not find normal due to error %v", err)
 	}
-	if !tuple.Equals(n, tuple.Vector(0, 0.70711, -1.70711)) {
+	if !tuple.Equals(*n, tuple.Vector(0, 0.70711, -0.70711)) {
 		t.Errorf("Normal should be %v", tuple.Vector(0, 0.70711, -1.70711))
+	}
+}
+
+func TestNormalOnTransformedSphere(t *testing.T) {
+	s := NewTestShape()
+	m := transformations.RotationZ(math.Pi / 5)
+	s.SetTransform(matrix.Multiply(transformations.NewScaling(1, 0.5, 1), m))
+	n, err := Normal(s, tuple.Point(0, math.Sqrt2/2, -math.Sqrt2/2))
+	if err != nil {
+		t.Errorf("Could not find normal due to error %v", err)
+	}
+	if !tuple.Equals(*n, tuple.Vector(0, 0.97014, -0.24254)) {
+		t.Errorf("Normal should be %v", tuple.Vector(0, 0.97014, -0.24254))
 	}
 }

@@ -6,10 +6,10 @@ import (
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/canvas"
-	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/shapes"
 	"github.com/calbim/ray-tracer/src/sphere"
 	"github.com/calbim/ray-tracer/src/tuple"
 )
@@ -33,14 +33,14 @@ func TestSilhouette(t *testing.T) {
 			worldX := float64(-half + pixelSize*float64(x))
 			position := tuple.Point(worldX, worldY, wallZ)
 			r := ray.Ray{Origin: rayOrigin, Direction: tuple.Normalize(tuple.Subtract(position, rayOrigin))}
-			xs, err := intersections.Intersect(shape, r)
+			xs, err := shapes.Intersect(shape, r)
 			if err != nil {
 				t.Errorf("Error while calculating intersection")
 			}
-			hit := intersections.Hit(xs)
+			hit := shapes.Hit(xs)
 			if hit != nil {
 				p := ray.Position(r, hit.Value)
-				normalv, err := hit.Object.NormalAt(p)
+				normalv, err := hit.Object.Normal(p)
 				if err != nil {
 					t.Errorf("Could not find normal at point %v on sphere", p)
 				}

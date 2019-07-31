@@ -4,16 +4,15 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/calbim/ray-tracer/src/ray"
-	"github.com/calbim/ray-tracer/src/util"
-
-	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/matrix"
+	"github.com/calbim/ray-tracer/src/ray"
+	"github.com/calbim/ray-tracer/src/shapes"
 	"github.com/calbim/ray-tracer/src/sphere"
 	"github.com/calbim/ray-tracer/src/transformations"
 	"github.com/calbim/ray-tracer/src/tuple"
+	"github.com/calbim/ray-tracer/src/util"
 )
 
 func TestCreateWorld(t *testing.T) {
@@ -79,8 +78,8 @@ func TestShadingIntersection(t *testing.T) {
 	}
 	r := ray.Ray{Origin: tuple.Point(0, 0, -5), Direction: tuple.Vector(0, 0, 1)}
 	shape := w.Objects[0]
-	i := intersections.Intersection{Value: 4.0, Object: shape}
-	comps, err := intersections.PrepareComputations(i, r)
+	i := shapes.Intersection{Value: 4.0, Object: shape}
+	comps, err := shapes.PrepareComputations(i, r)
 	if err != nil {
 		t.Error("Error preparing computations", err)
 	}
@@ -97,8 +96,8 @@ func TestShadingIntersectionInside(t *testing.T) {
 	w.Light = &light.PointLight{Intensity: tuple.Color(1, 1, 1), Position: tuple.Point(0, 0.25, 0)}
 	r := ray.Ray{Origin: tuple.Point(0, 0, 0), Direction: tuple.Vector(0, 0, 1)}
 	shape := w.Objects[1]
-	i := intersections.Intersection{Value: 0.5, Object: shape}
-	comps, err := intersections.PrepareComputations(i, r)
+	i := shapes.Intersection{Value: 0.5, Object: shape}
+	comps, err := shapes.PrepareComputations(i, r)
 	if err != nil {
 		t.Error("Error preparing computations", err)
 	}
@@ -129,8 +128,8 @@ func TestShadeHitWhenIntersectionIsInShadow(t *testing.T) {
 	s2.SetTransform(transformations.NewTranslation(0, 0, 10))
 	w.Objects = append(w.Objects, s2)
 	r := ray.Ray{Origin: tuple.Point(0, 0, 5), Direction: tuple.Vector(0, 0, 1)}
-	i := intersections.Intersection{Value: 4, Object: s2}
-	comps, err := intersections.PrepareComputations(i, r)
+	i := shapes.Intersection{Value: 4, Object: s2}
+	comps, err := shapes.PrepareComputations(i, r)
 	if err != nil {
 		t.Errorf("Error %v while preparing computation", err)
 	}
@@ -254,9 +253,15 @@ func TestHitShouldOffsetThePoint(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error while creating sphere %v", err)
 	}
-	s.SetTransform(transformations.NewTranslation(0, 0, 1))
-	i := intersections.Intersection{5, s}
-	comps, err := intersections.PrepareComputations(i, r)
+	inv, err := matrix.Inverse(transformations.NewTranslation(0, 0, 1), 4)
+	if err != nil {
+		t.Errorf("Could not calculate inverse because %v", err)
+	}
+	r.Origin = matrix.MultiplyWithTuple(inv, r.Origin)
+	r.Direction = matrix.MultiplyWithTuple(inv, r.Direction)
+	s.SetSavedRay(r)
+	i := shapes.Intersection{Value: 5, Object: s}
+	comps, err := shapes.PrepareComputations(i, r)
 	if err != nil {
 		t.Errorf("Error while preparing computation due to %v", err)
 	}
@@ -265,7 +270,7 @@ func TestHitShouldOffsetThePoint(t *testing.T) {
 	}
 }
 
-func contains(list []intersections.Object, s *sphere.Sphere) (bool, error) {
+func contains(list []shapes.Shape, s *sphere.Sphere) (bool, error) {
 	for _, obj := range list {
 		sphereObject, ok := obj.(*sphere.Sphere)
 		if !ok {

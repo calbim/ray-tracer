@@ -1,19 +1,27 @@
-package intersections
+package shapes
 
 import (
 	"testing"
 
-	"github.com/calbim/ray-tracer/src/sphere"
-
+	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
+type TestObject struct {
+}
+
+func (o TestObject) Normal(p tuple.Tuple) (*tuple.Tuple, error) {
+	v := tuple.Vector(p.X, p.Y, p.Z)
+	return &v, nil
+}
+
+func (o TestObject) GetMaterial() material.Material {
+	return material.Material{}
+}
+
 func TestIntersectionObject(t *testing.T) {
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error creating sphere due to %v", err)
-	}
+	s := NewTestShape()
 	i := Intersection{3.5, s}
 	if i.Value != 3.5 {
 		t.Errorf("The intersection point should be %f", 3.5)
@@ -24,10 +32,7 @@ func TestIntersectionObject(t *testing.T) {
 }
 
 func TestIntersectionCollection(t *testing.T) {
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error creating sphere due to %v", err)
-	}
+	s := NewTestShape()
 	i1 := Intersection{1, s}
 	i2 := Intersection{2, s}
 	xs := Intersections(i1, i2)
@@ -40,10 +45,7 @@ func TestIntersectionCollection(t *testing.T) {
 }
 
 func TestHitAllPositive(t *testing.T) {
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error creating sphere due to %v", err)
-	}
+	s := NewTestShape()
 	i1 := Intersection{1, s}
 	i2 := Intersection{2, s}
 	xs := Intersections(i1, i2)
@@ -54,10 +56,7 @@ func TestHitAllPositive(t *testing.T) {
 }
 
 func TestHitSomePositive(t *testing.T) {
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error creating sphere due to %v", err)
-	}
+	s := NewTestShape()
 	i1 := Intersection{-1, s}
 	i2 := Intersection{1, s}
 	xs := Intersections(i1, i2)
@@ -68,10 +67,7 @@ func TestHitSomePositive(t *testing.T) {
 }
 
 func TestHitAllNegative(t *testing.T) {
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error creating sphere due to %v", err)
-	}
+	s := NewTestShape()
 	i1 := Intersection{-2, s}
 	i2 := Intersection{-1, s}
 	xs := Intersections(i1, i2)
@@ -82,10 +78,7 @@ func TestHitAllNegative(t *testing.T) {
 }
 
 func TestHitMultipleIntersections(t *testing.T) {
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error creating sphere due to %v", err)
-	}
+	s := NewTestShape()
 	i1 := Intersection{5, s}
 	i2 := Intersection{7, s}
 	i3 := Intersection{-3, s}
@@ -102,10 +95,7 @@ func TestPrepareComputations(t *testing.T) {
 		Origin:    tuple.Point(0, 0, -5),
 		Direction: tuple.Vector(0, 0, 1),
 	}
-	s, err := sphere.New()
-	if err != nil {
-		t.Errorf("Error %v while creating sphere", err)
-	}
+	s := NewTestShape()
 	i := Intersection{
 		Value:  4,
 		Object: s,
@@ -136,11 +126,8 @@ func TestInsideFlagWhenIntersectionOutside(t *testing.T) {
 		Origin:    tuple.Point(0, 0, -5),
 		Direction: tuple.Vector(0, 0, 1),
 	}
-	shape, err := sphere.New()
-	if err != nil {
-		t.Errorf("Could not create sphere due to %v", err)
-	}
-	i := Intersection{Value: 4.0, Object: shape}
+	s := NewTestShape()
+	i := Intersection{Value: 4.0, Object: s}
 	comps, err := PrepareComputations(i, r)
 	if err != nil {
 		t.Errorf("Could not prepare computations due to %v", err)
@@ -155,11 +142,8 @@ func TestHitWhenIntersectionInside(t *testing.T) {
 		Origin:    tuple.Point(0, 0, 0),
 		Direction: tuple.Vector(0, 0, 1),
 	}
-	shape, err := sphere.New()
-	if err != nil {
-		t.Errorf("Could not create sphere due to %v", err)
-	}
-	i := Intersection{Value: 1.0, Object: shape}
+	s := NewTestShape()
+	i := Intersection{Value: 1.0, Object: s}
 	comps, err := PrepareComputations(i, r)
 	if err != nil {
 		t.Errorf("Could not prepare computations due to %v", err)

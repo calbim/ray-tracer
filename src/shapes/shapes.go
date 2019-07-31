@@ -6,7 +6,6 @@ import (
 
 	"github.com/calbim/ray-tracer/src/tuple"
 
-	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/matrix"
 	"github.com/calbim/ray-tracer/src/ray"
@@ -20,8 +19,8 @@ type Shape interface {
 	SetMaterial(material.Material)
 	GetSavedRay() ray.Ray
 	SetSavedRay(r ray.Ray)
-	Intersect() ([]intersections.Intersection, error)
-	Normal(tuple.Tuple) (tuple.Tuple, error)
+	Intersect() ([]Intersection, error)
+	Normal(tuple.Tuple) (*tuple.Tuple, error)
 }
 
 // TestShape is an object of type Shape
@@ -62,13 +61,14 @@ func (ts *TestShape) SetSavedRay(r ray.Ray) {
 }
 
 // Intersect returns the intersections when ray intersects shape
-func (ts *TestShape) Intersect() ([]intersections.Intersection, error) {
-	return []intersections.Intersection{}, nil
+func (ts *TestShape) Intersect() ([]Intersection, error) {
+	return []Intersection{}, nil
 }
 
 // Normal calculates a normal at point p
-func (ts *TestShape) Normal(p tuple.Tuple) (tuple.Tuple, error) {
-	return tuple.Vector(p.X, p.Y, p.Z), nil
+func (ts *TestShape) Normal(p tuple.Tuple) (*tuple.Tuple, error) {
+	v := tuple.Vector(p.X, p.Y, p.Z)
+	return &v, nil
 }
 
 // NewTestShape returns a new TestShape
@@ -80,7 +80,7 @@ func NewTestShape() *TestShape {
 }
 
 // Intersect returns the intersections when a ray intersects a shape
-func Intersect(s Shape, r ray.Ray) ([]intersections.Intersection, error) {
+func Intersect(s Shape, r ray.Ray) ([]Intersection, error) {
 	inv, err := matrix.Inverse(s.GetTransform(), 4)
 	if err != nil {
 		return nil, fmt.Errorf("Could not calculate matrix inverse %v", err)
@@ -103,8 +103,7 @@ func Normal(s Shape, p tuple.Tuple) (*tuple.Tuple, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Could not calculate normal because %v", err)
 	}
-	tuple.Subtract(localPoint, tuple.Point(0, 0, 0))
-	worldNormal := matrix.MultiplyWithTuple(matrix.Transpose(inverse), localNormal)
+	worldNormal := matrix.MultiplyWithTuple(matrix.Transpose(inverse), *localNormal)
 	worldNormal.W = 0
 	normalized := tuple.Normalize(worldNormal)
 	return &normalized, nil

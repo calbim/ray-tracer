@@ -7,8 +7,7 @@ import (
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/matrix"
-
-	"github.com/calbim/ray-tracer/src/intersections"
+	"github.com/calbim/ray-tracer/src/shapes"
 
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/world"
@@ -88,13 +87,13 @@ func TestRenderScene(t *testing.T) {
 	left.Material.Specular = 0.6
 
 	w := world.World{}
-	w.Objects = []intersections.Object{floor, leftWall, rightWall, middle, right, left}
+	w.Objects = []shapes.Shape{floor, leftWall, rightWall, middle, right, left}
 	if err != nil {
 		t.Errorf("Could not create world due to error %v", err)
 	}
 	w.Light = &light.PointLight{Position: tuple.Point(-10, 10, -10), Intensity: tuple.Color(1, 1, 1)}
 
-	camera := camera.New(3000, 1500, math.Pi/3)
+	camera := camera.New(200, 100, math.Pi/3)
 	camera.Transform = transformations.ViewTransform(tuple.Point(4, 5, -5), tuple.Point(0, 1, 0), tuple.Vector(0, 1, 0))
 	image, err := camera.Render(w)
 	if err != nil {

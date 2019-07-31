@@ -1,36 +1,27 @@
-package intersections
+package shapes
 
 import (
 	"fmt"
 	"math"
 
+	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/util"
 
-	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/ray"
 
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
-//Object interface
-type Object interface {
-	GetMaterial() material.Material
-	SetMaterial(material.Material)
-	Intersect(ray.Ray) ([]float64, error)
-	NormalAt(tuple.Tuple) (*tuple.Tuple, error)
-	SetTransform([][]float64)
-}
-
 // Intersection encapsulates an object and the intersection point
 type Intersection struct {
 	Value  float64
-	Object Object
+	Object Shape
 }
 
 // Computation object that contains more data about an intersection
 type Computation struct {
 	Value     float64 // t value
-	Object    Object
+	Object    Shape
 	Point     tuple.Tuple
 	Overpoint tuple.Tuple
 	Eyev      tuple.Tuple
@@ -66,32 +57,9 @@ func Hit(intersections []Intersection) *Intersection {
 	return &intersections[index]
 }
 
-// NormalAt returns the normal for the underlying object at point p
-func NormalAt(o Object, p tuple.Tuple) (*tuple.Tuple, error) {
-	return o.NormalAt(p)
-}
-
-// Material returns the object's material
-func Material(o Object) material.Material {
+// GetMaterial returns the material for the underlying object at point p
+func GetMaterial(o Shape) material.Material {
 	return o.GetMaterial()
-}
-
-//SetMaterial sets material m in object o
-func SetMaterial(o Object, m material.Material) {
-	o.SetMaterial(m)
-}
-
-// Intersect returns the intersections of object o with ray r
-func Intersect(o Object, r ray.Ray) ([]Intersection, error) {
-	points, err := o.Intersect(r)
-	if err != nil {
-		return nil, fmt.Errorf("Could not find intersection points due to error %v", err)
-	}
-	intersections := []Intersection{}
-	for _, val := range points {
-		intersections = append(intersections, Intersection{Value: val, Object: o})
-	}
-	return intersections, nil
 }
 
 // PrepareComputations calculates the Computation object for an intersection
@@ -99,7 +67,7 @@ func PrepareComputations(i Intersection, r ray.Ray) (*Computation, error) {
 	tValue := i.Value
 	object := i.Object
 	point := ray.Position(r, tValue)
-	normal, err := NormalAt(object, point)
+	normal, err := Normal(object, point)
 	eyev := tuple.Negate(r.Direction)
 	inside := false
 	if tuple.DotProduct(*normal, eyev) < 0 {

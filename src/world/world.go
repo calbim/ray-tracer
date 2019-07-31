@@ -5,9 +5,10 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/calbim/ray-tracer/src/shapes"
+
 	"github.com/calbim/ray-tracer/src/ray"
 
-	"github.com/calbim/ray-tracer/src/intersections"
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
 	"github.com/calbim/ray-tracer/src/sphere"
@@ -17,7 +18,7 @@ import (
 
 //World contains a set of objects and a light source
 type World struct {
-	Objects []intersections.Object
+	Objects []shapes.Shape
 	Light   *light.PointLight
 }
 
@@ -42,23 +43,23 @@ func NewDefault() (*World, error) {
 	s1.Material = s1M
 	s2.Material = m
 	s2.SetTransform(transformations.NewScaling(0.5, 0.5, 0.5))
-	w.Objects = []intersections.Object{s1, s2}
+	w.Objects = []shapes.Shape{s1, s2}
 	return &w, nil
 }
 
 // ByIntersectionValue implements sort.Interface for []Intersection based on
 // the Value field.
-type ByIntersectionValue []intersections.Intersection
+type ByIntersectionValue []shapes.Intersection
 
 func (a ByIntersectionValue) Len() int           { return len(a) }
 func (a ByIntersectionValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
 func (a ByIntersectionValue) Less(i, j int) bool { return a[i].Value < a[j].Value }
 
 //Intersect returns a list of intersections in sorted order when a ray passes through a world
-func (w World) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
-	list := []intersections.Intersection{}
+func (w World) Intersect(r ray.Ray) ([]shapes.Intersection, error) {
+	list := []shapes.Intersection{}
 	for _, o := range w.Objects {
-		intersection, err := intersections.Intersect(o, r)
+		intersection, err := shapes.Intersect(o, r)
 		if err != nil {
 			return nil, fmt.Errorf("Error while computing intersection for object %v", err)
 		}
@@ -69,7 +70,7 @@ func (w World) Intersect(r ray.Ray) ([]intersections.Intersection, error) {
 }
 
 //ShadeHit computes the color of an intersection in a world
-func ShadeHit(w World, comp intersections.Computation) tuple.Tuple {
+func ShadeHit(w World, comp shapes.Computation) tuple.Tuple {
 	shadow, err := w.IsShadowed(comp.Overpoint)
 	if err != nil {
 		shadow = false
@@ -86,12 +87,12 @@ func ColorAt(w World, r ray.Ray) (*tuple.Tuple, error) {
 			return nil, errors.New("Error finding intersections of world with ray")
 		}
 	}
-	hit := intersections.Hit(ints)
+	hit := shapes.Hit(ints)
 	color := tuple.Color(0, 0, 0)
 	if hit == nil {
 		return &color, nil
 	}
-	comps, err := intersections.PrepareComputations(*hit, r)
+	comps, err := shapes.PrepareComputations(*hit, r)
 	if err != nil {
 		return nil, fmt.Errorf("Error while preparing computations %v", err)
 	}
@@ -111,7 +112,7 @@ func (w *World) IsShadowed(p tuple.Tuple) (bool, error) {
 	if err != nil {
 		return false, fmt.Errorf("Error determining if point is shadowed due to error %v", err)
 	}
-	hit := intersections.Hit(is)
+	hit := shapes.Hit(is)
 	if hit != nil && hit.Value < d {
 		return true, nil
 	}
