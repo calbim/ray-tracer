@@ -5,13 +5,14 @@ import (
 	"fmt"
 	"sort"
 
+	"github.com/calbim/ray-tracer/src/sphere"
+
 	"github.com/calbim/ray-tracer/src/shapes"
 
 	"github.com/calbim/ray-tracer/src/ray"
 
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
-	"github.com/calbim/ray-tracer/src/sphere"
 	"github.com/calbim/ray-tracer/src/transformations"
 	"github.com/calbim/ray-tracer/src/tuple"
 )
