@@ -128,6 +128,11 @@ func TestSceneWithPlanes(t *testing.T) {
 	floor.Material.Color = tuple.Color(1, 0.9, 0.9)
 	floor.Material.Specular = 0
 
+	wall1 := New()
+	wall1.Material.Color = tuple.ColorFromHex("c1c7c9ff")
+	wall1.Material.Specular = 0
+	wall1.SetTransform(matrix.Multiply(transformations.NewTranslation(0, 0, 5), transformations.RotationX(math.Pi/2)))
+
 	middle, err := sphere.New()
 	if err != nil {
 		t.Errorf("Error %v creating middle sphere", err)
@@ -150,14 +155,14 @@ func TestSceneWithPlanes(t *testing.T) {
 	right.Material.Specular = 0.4
 
 	w := world.World{}
-	w.Objects = []shapes.Shape{floor, middle, right}
+	w.Objects = []shapes.Shape{floor, middle, right, wall1}
 	if err != nil {
 		t.Errorf("Could not create world due to error %v", err)
 	}
 	w.Light = &light.PointLight{Position: tuple.Point(-10, 10, -10), Intensity: tuple.Color(1, 1, 1)}
 
 	camera := camera.New(200, 100, math.Pi/3)
-	camera.Transform = transformations.ViewTransform(tuple.Point(4, 5, -5), tuple.Point(0, 1, 0), tuple.Vector(0, 1, 0))
+	camera.Transform = transformations.ViewTransform(tuple.Point(1, 1, -5), tuple.Point(0, 1, 0), tuple.Vector(0, 1, 0))
 	image, err := camera.Render(w)
 	if err != nil {
 		t.Errorf("Error while rendering camera to world %v", err)

@@ -83,6 +83,7 @@ func TestRenderScene(t *testing.T) {
 	left.SetTransform(matrix.Multiply(transformations.NewTranslation(-1.5, 0.5, -0.75), transform))
 	left.SetMaterial(material.New())
 	left.Material.Color = tuple.ColorFromHex("a64263ff")
+	// left.Material.Pattern = pattern.StripePattern(tuple.ColorFromHex("a64263ff"), tuple.White)
 	left.Material.Diffuse = 0.85
 	left.Material.Specular = 0.6
 

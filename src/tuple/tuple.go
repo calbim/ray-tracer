@@ -16,6 +16,9 @@ type Tuple struct {
 	W float64
 }
 
+var Black = ColorFromHex("000000ff")
+var White = ColorFromHex("ffffffff")
+
 // Point is a factory method that returns a point Tuple
 func Point(x, y, z float64) Tuple {
 	return Tuple{x, y, z, 1.0}

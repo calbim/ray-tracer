@@ -3,6 +3,8 @@ package material
 import (
 	"math"
 
+	"github.com/calbim/ray-tracer/src/pattern"
+
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/tuple"
 )
@@ -14,6 +16,7 @@ type Material struct {
 	Diffuse   float64
 	Specular  float64
 	Shininess float64
+	Pattern   *pattern.Pattern
 }
 
 //New returns a default material
@@ -29,7 +32,11 @@ func New() Material {
 
 //Lighting returns the shade an observer sees
 func Lighting(material Material, light light.PointLight, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) tuple.Tuple {
-	effectiveColor := tuple.HadamardProduct(light.Intensity, material.Color)
+	color := material.Color
+	if material.Pattern != nil {
+		color = pattern.StripeAt(*material.Pattern, point)
+	}
+	effectiveColor := tuple.HadamardProduct(light.Intensity, color)
 	lightv := tuple.Normalize(tuple.Subtract(light.Position, point))
 	ambient := tuple.MultiplyByScalar(effectiveColor, material.Ambient)
 	lightDotNormal := tuple.DotProduct(lightv, normalv)
