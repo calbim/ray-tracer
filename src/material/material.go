@@ -3,26 +3,25 @@ package material
 import (
 	"math"
 
-	"github.com/calbim/ray-tracer/src/pattern"
-
-	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/tuple"
+
+	"github.com/calbim/ray-tracer/src/color"
+	"github.com/calbim/ray-tracer/src/light"
 )
 
-//Material represents a surface and components of the Phong reflection model
+//Material represents the properties of a material as per the phong reflection model
 type Material struct {
-	Color     tuple.Tuple
+	Color     color.Color
 	Ambient   float64
 	Diffuse   float64
 	Specular  float64
 	Shininess float64
-	Pattern   *pattern.Pattern
 }
 
 //New returns a default material
 func New() Material {
 	return Material{
-		Color:     tuple.Color(1, 1, 1),
+		Color:     color.New(1, 1, 1),
 		Ambient:   0.1,
 		Diffuse:   0.9,
 		Specular:  0.9,
@@ -30,26 +29,25 @@ func New() Material {
 	}
 }
 
-//Lighting returns the shade an observer sees
-func Lighting(material Material, light light.PointLight, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) tuple.Tuple {
-	color := material.Color
-	if material.Pattern != nil {
-		color = pattern.StripeAt(*material.Pattern, point)
-	}
-	effectiveColor := tuple.HadamardProduct(light.Intensity, color)
-	lightv := tuple.Normalize(tuple.Subtract(light.Position, point))
-	ambient := tuple.MultiplyByScalar(effectiveColor, material.Ambient)
-	lightDotNormal := tuple.DotProduct(lightv, normalv)
-	diffuse, specular := tuple.Color(0, 0, 0), tuple.Color(0, 0, 0)
-	if lightDotNormal >= 0 && !inShadow {
-		diffuse = tuple.MultiplyByScalar(effectiveColor, material.Diffuse*lightDotNormal)
-		reflectv := tuple.Reflect(tuple.Negate(lightv), normalv)
-		reflectDotEye := tuple.DotProduct(reflectv, eyev)
-
+//Lighting returns the shade of an object under various light properties
+func (m *Material) Lighting(light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple) color.Color {
+	c := m.Color
+	effectiveColor := c.MultiplyColor(light.Intensity)
+	lightv := light.Position.Subtract(point)
+	lightv = lightv.Normalize()
+	ambient := effectiveColor.Multiply(m.Ambient)
+	lightDotNormal := lightv.DotProduct(normalv)
+	diffuse, specular := color.Black, color.Black
+	if lightDotNormal >= 0 {
+		diffuse = effectiveColor.Multiply(m.Diffuse * lightDotNormal)
+		reflectv := lightv.Negate()
+		reflectv = reflectv.Reflect(normalv)
+		reflectDotEye := reflectv.DotProduct(eyev)
 		if reflectDotEye > 0 {
-			factor := math.Pow(reflectDotEye, material.Shininess)
-			specular = tuple.MultiplyByScalar(light.Intensity, material.Specular*factor)
+			factor := math.Pow(reflectDotEye, m.Shininess)
+			specular = light.Intensity.Multiply(m.Specular * factor)
 		}
 	}
-	return tuple.Add(ambient, tuple.Add(diffuse, specular))
+	sum := diffuse.Add(specular)
+	return sum.Add(ambient)
 }

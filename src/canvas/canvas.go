@@ -2,38 +2,36 @@ package canvas
 
 import (
 	"fmt"
-	"math"
-	"strconv"
 	"strings"
 
-	"github.com/calbim/ray-tracer/src/tuple"
+	"github.com/calbim/ray-tracer/src/color"
 )
 
-// Canvas represents a collection of pixels
+// Canvas is a collection of pixels
 type Canvas struct {
 	width  int
 	height int
-	Pixels [][]tuple.Tuple
+	Pixels [][]color.Color
 }
 
 // New returns a new Canvas with width w and height h
 func New(w, h int) Canvas {
-	pixels := make([][]tuple.Tuple, h)
+	pixels := make([][]color.Color, h)
 	for i := 0; i < h; i++ {
-		pixels[i] = make([]tuple.Tuple, w)
+		pixels[i] = make([]color.Color, w)
 	}
 	return Canvas{
 		w, h, pixels,
 	}
 }
 
-// WritePixel writes pixel p at position width x, height y on a canvas c
-func WritePixel(c *Canvas, x int, y int, p tuple.Tuple) {
-	c.Pixels[y][x] = p
+// WritePixel writes a color at  width x and height y
+func (c *Canvas) WritePixel(x int, y int, col color.Color) {
+	c.Pixels[y][x] = col
 }
 
-// ToPPM returns the PPM string representation of a canvas
-func ToPPM(c Canvas) string {
+// ToPPM converts a canvas to a PPM image type
+func (c *Canvas) ToPPM() string {
 	var b strings.Builder
 	b.WriteString("P3\n")
 	b.WriteString(fmt.Sprintf("%d %d\n", c.width, c.height))
@@ -41,7 +39,8 @@ func ToPPM(c Canvas) string {
 	length := 0
 	for i := 0; i < c.height; i++ {
 		for j := 0; j < c.width; j++ {
-			pix := ToPixel(c.Pixels[i][j])
+			p := c.Pixels[i][j]
+			pix := p.ToPPMPixel()
 			b.WriteString(pix)
 			length = length + len(pix)
 			if length > 56 {
@@ -54,42 +53,4 @@ func ToPPM(c Canvas) string {
 		}
 	}
 	return b.String()
-}
-
-//SplitPPM splits long rows in PPM files when they exceed 70 chars
-func SplitPPM(s string) string {
-	slice := strings.Fields(s)
-	res := ""
-	limit := 17
-	for len(slice) > 0 {
-		res = res + strings.Join(slice[:limit], " ") + "\n"
-		slice = slice[limit:]
-		if len(slice) < limit {
-			limit = len(slice)
-		}
-	}
-	return res
-}
-
-// ToPixel converts a color tuple to an string of 3 integers
-// each lying between 0 and 255
-func ToPixel(color tuple.Tuple) string {
-	r := ColorToString(color.X)
-	b := ColorToString(color.Y)
-	g := ColorToString(color.Z)
-
-	return r + " " + b + " " + g + " "
-}
-
-// ColorToString converts a float64 representing a hue (r, b or g)
-// to a number lying between 0 and 255
-func ColorToString(c float64) string {
-	i := math.Round(c * 255)
-	if i > 255 {
-		i = 255
-	}
-	if i < 0 {
-		i = 0
-	}
-	return strconv.Itoa(int(i))
 }

@@ -6,9 +6,7 @@ import (
 	"github.com/calbim/ray-tracer/src/util"
 )
 
-// A Tuple is a set of coordinates (x,y,z) that represent a  point or direction in space.
-// w = 1.0 for a point
-// w = 0.0 for a vector
+// Tuple is set of coordinates
 type Tuple struct {
 	X float64
 	Y float64
@@ -16,93 +14,77 @@ type Tuple struct {
 	W float64
 }
 
-var Black = ColorFromHex("000000ff")
-var White = ColorFromHex("ffffffff")
-
-// Point is a factory method that returns a point Tuple
+// Point returns a new point
 func Point(x, y, z float64) Tuple {
-	return Tuple{x, y, z, 1.0}
+	return Tuple{x, y, z, 1}
 }
 
-// Vector is a factory method that returns a point Vector
+// Vector returns a new vector
 func Vector(x, y, z float64) Tuple {
-	return Tuple{x, y, z, 0.0}
+	return Tuple{x, y, z, 0}
 }
 
-// Add adds t1 and t2 and returns a tuple
-func Add(t1, t2 Tuple) Tuple {
-	return Tuple{t1.X + t2.X, t1.Y + t2.Y, t1.Z + t2.Z, t1.W + t2.W}
+// Add returns t1 + t2
+func (t *Tuple) Add(t2 Tuple) Tuple {
+	return Tuple{t.X + t2.X, t.Y + t2.Y, t.Z + t2.Z, t.W + t2.W}
 }
 
-// Subtract subtracts t2 from t1 and returns a tuple
-func Subtract(t1, t2 Tuple) Tuple {
-	return Tuple{t1.X - t2.X, t1.Y - t2.Y, t1.Z - t2.Z, t1.W - t2.W}
+// Subtract returns t1 - t2
+func (t *Tuple) Subtract(t2 Tuple) Tuple {
+	return Tuple{t.X - t2.X, t.Y - t2.Y, t.Z - t2.Z, t.W - t2.W}
 }
 
-// Negate returns the negative of a tuple
-func Negate(tup Tuple) Tuple {
-	return Tuple{-tup.X, -tup.Y, -tup.Z, -tup.W}
+// isPoint reports whether t is a point
+func (t *Tuple) isPoint() bool {
+	return t.W == 1
 }
 
-// MultiplyByScalar multiplies a tuple with a scalar and returns the result
-func MultiplyByScalar(t Tuple, f float64) Tuple {
-	return Tuple{t.X * f, t.Y * f, t.Z * f, t.W * f}
+// isVector reports whether t is a vector
+func (t *Tuple) isVector() bool {
+	return t.W == 0
 }
 
-// DivideByScalar divides a tuple with a scalar and returns the result
-func DivideByScalar(t Tuple, f float64) Tuple {
-	return Tuple{t.X / f, t.Y / f, t.Z / f, t.W / f}
+// Negate returns the negation of a tuple
+func (t *Tuple) Negate() Tuple {
+	return Tuple{-t.X, -t.Y, -t.Z, -t.W}
+}
+
+// Multiply returns the product of a tuple and a number
+func (t *Tuple) Multiply(n float64) Tuple {
+	return Tuple{t.X * n, t.Y * n, t.Z * n, t.W * n}
+}
+
+// Divide returns the result of dividing a tuple by a number
+func (t *Tuple) Divide(n float64) Tuple {
+	return Tuple{t.X / n, t.Y / n, t.Z / n, t.W / n}
 }
 
 // Magnitude returns the magnitude of a vector
-func Magnitude(t Tuple) float64 {
+func (t *Tuple) Magnitude() float64 {
 	return math.Sqrt(t.X*t.X + t.Y*t.Y + t.Z*t.Z + t.W*t.W)
 }
 
-// Normalize converts a vector to a unit vector while preserving the direction of the vector
-func Normalize(t Tuple) Tuple {
-	return DivideByScalar(t, Magnitude(t))
+// Normalize converts a vector to a unit vector
+func (t *Tuple) Normalize() Tuple {
+	return t.Divide(t.Magnitude())
 }
 
 // DotProduct returns the scalar product of two vectors
-func DotProduct(v1, v2 Tuple) float64 {
-	return v1.X*v2.X + v1.Y*v2.Y + v1.Z*v2.Z + v1.W*v2.W
+func (t *Tuple) DotProduct(t2 Tuple) float64 {
+	return t.X*t2.X + t.Y*t2.Y + t.Z*t2.Z + t.W*t2.W
 }
 
 // CrossProduct returns the vector product of two vectors
-func CrossProduct(v1, v2 Tuple) Tuple {
-	return Tuple{v1.Y*v2.Z - v1.Z*v2.Y, v1.Z*v2.X - v2.Z*v1.X, v1.X*v2.Y - v2.X*v1.Y, 0}
+func (t *Tuple) CrossProduct(t2 Tuple) Tuple {
+	return Tuple{t.Y*t2.Z - t.Z*t2.Y, t.Z*t2.X - t2.Z*t.X, t.X*t2.Y - t2.X*t.Y, 0}
 }
 
-// Color returns a tuple that denotes a color
-// X = red; Y = blue; Z = green
-func Color(r, b, g float64) Tuple {
-	return Tuple{r, b, g, 0}
+// Equals reports whether two tuples are the same
+func (t *Tuple) Equals(t2 Tuple) bool {
+	return util.Equals(t.X, t2.X) && util.Equals(t.Y, t2.Y) && util.Equals(t.Z, t2.Z) && util.Equals(t.W, t2.W)
 }
 
-// ColorFromHex returns a tuple that denotes a hex colour
-func ColorFromHex(hex string) Tuple {
-	rgb := util.HexToRGB(hex)
-	return Color(rgb[0], rgb[1], rgb[2])
-}
-
-// HadamardProduct is what you do to blend two colors
-func HadamardProduct(c1, c2 Tuple) Tuple {
-	return Tuple{
-		c1.X * c2.X, c1.Y * c2.Y, c1.Z * c2.Z, 0,
-	}
-}
-
-//Equals checks for the equality of two tuples
-func Equals(t1, t2 Tuple) bool {
-	if util.Equals(t1.X, t2.X) && util.Equals(t1.Y, t2.Y) &&
-		util.Equals(t1.Z, t2.Z) && util.Equals(t1.W, t2.W) {
-		return true
-	}
-	return false
-}
-
-//Reflect returns the reflected vector corresponding to in around normal
-func Reflect(in, normal Tuple) Tuple {
-	return Subtract(in, MultiplyByScalar(normal, 2*DotProduct(in, normal)))
+//Reflect returns the vector after it reflects with respect to the given normal
+func (t *Tuple) Reflect(normal Tuple) Tuple {
+	return t.Subtract(normal.Multiply(2*(t.DotProduct(normal))))
 }
