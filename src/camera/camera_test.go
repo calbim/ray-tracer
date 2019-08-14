@@ -1,12 +1,11 @@
 package camera
 
 import (
+	"github.com/calbim/ray-tracer/src/color"
+	"github.com/calbim/ray-tracer/src/world"
 	"fmt"
 	"math"
 	"testing"
-
-	"github.com/calbim/ray-tracer/src/color"
-	"github.com/calbim/ray-tracer/src/world"
 
 	"github.com/calbim/ray-tracer/src/matrix"
 	"github.com/calbim/ray-tracer/src/transforms"
@@ -86,7 +85,7 @@ func TestConstructRayWhenCameraIsTransformed(t *testing.T) {
 }
 
 func TestRender(t *testing.T) {
-	w := world.New()
+	w := world.Default()
 	c := New(11, 11, math.Pi/2)
 	from := tuple.Point(0, 0, -5)
 	to := tuple.Point(0, 0, 0)

@@ -12,69 +12,66 @@ import (
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
-//World is a world object containing a light source and objects
+// World is a collection of objects and a light source
 type World struct {
 	Objects []shape.Shape
 	Light   *light.Light
 }
 
-//Object interface
-type Object interface {
-}
-
-//New returns a default world object
-func New() World {
-	l := light.PointLight(tuple.Point(-10, 10, -10), color.New(1, 1, 1))
-
-	w := World{
-		Light: &l,
-	}
+// Default returns a default World object
+func Default() World {
+	light := light.PointLight(tuple.Point(-10, 10, -10), color.New(1, 1, 1))
 	s1 := shape.NewSphere()
-	s2 := shape.NewSphere()
 	m := material.New()
-	s1M := m
-	s1M.Color = color.New(0.8, 1.0, 0.6)
-	s1M.Diffuse = 0.7
-	s1M.Specular = 0.2
-	s1.Material = s1M
-	s2.Material = m
-	s2.SetTransform(transforms.Scaling(0.5, 0.5, 0.5))
-	w.Objects = []shape.Shape{s1, s2}
-	return w
+	m.Color = color.New(0.8, 1.0, 0.6)
+	m.Diffuse = 0.7
+	m.Specular = 0.2
+	s1.Material = m
+	s2 := shape.NewSphere()
+	s2.Transform = transforms.Scaling(0.5, 0.5, 0.5)
+	return World{
+		Light:   &light,
+		Objects: []shape.Shape{s1, s2},
+	}
 }
 
-//Intersect returns a list of intersections in sorted order when a ray passes through a world
-func (w World) Intersect(r ray.Ray) []shape.Intersection {
+// Intersect returns the intersections of a collection of objects with a ray
+func (w *World) Intersect(r ray.Ray) []shape.Intersection {
 	list := []shape.Intersection{}
 	for _, o := range w.Objects {
-		intersection := o.Intersect(r)
-		list = append(list, intersection...)
+		intersections := o.Intersect(r)
+		list = append(list, intersections...)
 	}
-	sort.Sort(ByIntersectionValue(list))
+	sort.Sort(byValue(list))
 	return list
 }
 
-//ShadeHit computes the color of an intersection in a world
-func (w *World) ShadeHit(comp shape.Computation) color.Color {
-	return comp.Object.GetMaterial().Lighting(*w.Light,
-		comp.Point, comp.Eyev, comp.Normal)
+//ShadeHit returns the shade of a hit
+func (w *World) ShadeHit(c shape.Computation) color.Color {
+	m := c.Object.GetMaterial()
+	l := w.Light
+	return m.Lighting(*l, c.Point, c.Eyev, c.Normal)
 }
 
-//ColorAt returns the color of the intersection of ray r with world w
+//ColorAt returns the color of an intersection
 func (w *World) ColorAt(r ray.Ray) color.Color {
-	ints := w.Intersect(r)
-	hit := shape.Hit(ints)
+	intersections := w.Intersect(r)
+	hit := shape.Hit(intersections)
 	if hit == nil {
 		return color.Black
 	}
-	comp := hit.PrepareComputations(r)
-	shade := w.ShadeHit(comp)
-	return shade
+	comps := hit.PrepareComputations(r)
+	return w.ShadeHit(comps)
 }
 
-// ByIntersectionValue implements sort.Interface for []Intersection based on the value
-type ByIntersectionValue []shape.Intersection
+type byValue []shape.Intersection
 
-func (a ByIntersectionValue) Len() int           { return len(a) }
-func (a ByIntersectionValue) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByIntersectionValue) Less(i, j int) bool { return a[i].Value < a[j].Value }
+func (s byValue) Len() int {
+	return len(s)
+}
+func (s byValue) Swap(i, j int) {
+	s[i], s[j] = s[j], s[i]
+}
+func (s byValue) Less(i, j int) bool {
+	return s[i].Value < s[j].Value
+}

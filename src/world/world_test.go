@@ -21,7 +21,7 @@ func TestCreateWorld(t *testing.T) {
 }
 
 func TestDefaultWorld(t *testing.T) {
-	w := New()
+	w := Default()
 	light := light.PointLight(tuple.Point(-10, 10, -10), color.New(1, 1, 1))
 
 	m := material.Material{Color: color.New(0.8, 1.0, 0.6), Diffuse: 0.7, Specular: 0.2, Ambient: 0.1, Shininess: 200}
@@ -42,7 +42,7 @@ func TestDefaultWorld(t *testing.T) {
 }
 
 func TestIntersectWorld(t *testing.T) {
-	w := New()
+	w := Default()
 	r := ray.New(tuple.Point(0.0, 0.0, -5.0), tuple.Vector(0.0, 0.0, 1.0))
 	xs := w.Intersect(r)
 	if len(xs) != 4 {
@@ -54,7 +54,7 @@ func TestIntersectWorld(t *testing.T) {
 }
 
 func TestShadingIntersection(t *testing.T) {
-	w := New()
+	w := Default()
 	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
 	s := w.Objects[0]
 	i := &shape.Intersection{Value: 4.0, Object: s}
@@ -66,7 +66,7 @@ func TestShadingIntersection(t *testing.T) {
 }
 
 func TestShadingIntersectionInside(t *testing.T) {
-	w := New()
+	w := Default()
 	l := light.PointLight(tuple.Point(0, 0.25, 0), color.New(1, 1, 1))
 	w.Light = &l
 	r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 0, 1))
@@ -80,7 +80,7 @@ func TestShadingIntersectionInside(t *testing.T) {
 }
 
 func TestColorWhenRayMisses(t *testing.T) {
-	w := New()
+	w := Default()
 	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 1, 0))
 	c := w.ColorAt(r)
 	if !c.Equals(color.New(0, 0, 0)) {
@@ -89,7 +89,7 @@ func TestColorWhenRayMisses(t *testing.T) {
 }
 
 func TestDefaultColorWhenRayHits(t *testing.T) {
-	w := New()
+	w := Default()
 	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
 	c := w.ColorAt(r)
 	if !c.Equals(color.New(0.38066, 0.47583, 0.2855)) {
@@ -98,7 +98,7 @@ func TestDefaultColorWhenRayHits(t *testing.T) {
 }
 
 func TestColorWhenIntersectionIsBehindRay(t *testing.T) {
-	w := New()
+	w := Default()
 	m := w.Objects[0].GetMaterial()
 	m.Ambient = 1
 	outer := w.Objects[0]

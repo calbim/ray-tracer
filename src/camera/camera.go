@@ -1,16 +1,17 @@
 package camera
 
 import (
-	"github.com/calbim/ray-tracer/src/world"
-	"github.com/calbim/ray-tracer/src/canvas"
 	"math"
 
+	"github.com/calbim/ray-tracer/src/canvas"
 	"github.com/calbim/ray-tracer/src/matrix"
+	"github.com/calbim/ray-tracer/src/world"
+
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
-// Camera represents a camera
+//Camera represents a camera
 type Camera struct {
 	HSize       float64 //in pixels
 	VSize       float64
@@ -39,7 +40,7 @@ func New(hSize float64, vSize float64, fieldOfView float64) Camera {
 		c.HalfWidth = halfView * aspect
 		c.HalfHeight = halfView
 	}
-	c.PixelSize = c.HalfWidth * 2 / c.HSize
+	c.PixelSize = (c.HalfWidth * 2) / c.HSize
 	return c
 }
 
@@ -50,7 +51,6 @@ func (c *Camera) RayForPixel(x, y int) *ray.Ray {
 	worldX := c.HalfWidth - xOffset
 	worldY := c.HalfHeight - yOffset
 	inverse, err := c.Transform.Inverse()
-	c.Transform = inverse
 	if err != nil {
 		return nil
 	}
@@ -67,6 +67,9 @@ func (c Camera) Render(w world.World) *canvas.Canvas {
 	image := canvas.New(int(c.HSize), int(c.VSize))
 	for y := 0; y < int(c.VSize); y++ {
 		for x := 0; x < int(c.HSize); x++ {
+			if x == 73 && y == 22 {
+				x = 73
+			}
 			r := c.RayForPixel(x, y)
 			col := w.ColorAt(*r)
 			image.WritePixel(x, y, col)

@@ -58,6 +58,12 @@ func (c *Color) ToPPMPixel() string {
 	return r + " " + g + " " + b + " "
 }
 
+// FromHex returns a color from a hex string
+func FromHex(hex string) Color {
+	rgb := util.HexToRGB(hex)
+	return New(rgb[0], rgb[1], rgb[2])
+}
+
 // ToInt converts a float color to a number lying between 0 and 255
 func ToInt(c float64) string {
 	i := math.Round(c * 255)

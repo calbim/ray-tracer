@@ -50,7 +50,8 @@ func Chain(transforms ...*matrix.Matrix) *matrix.Matrix {
 func ViewTransform(from tuple.Tuple, to tuple.Tuple, up tuple.Tuple) *matrix.Matrix {
 	forward := to.Subtract(from)
 	forward = forward.Normalize()
-	left := forward.CrossProduct(up.Normalize())
+	upNormalize := up.Normalize()
+	left := forward.CrossProduct(upNormalize)
 	trueUp := left.CrossProduct(forward)
 	orientation := matrix.New([]float64{
 		left.X, left.Y, left.Z, 0,
