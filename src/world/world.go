@@ -50,7 +50,7 @@ func (w *World) Intersect(r ray.Ray) []shape.Intersection {
 func (w *World) ShadeHit(c shape.Computation) color.Color {
 	m := c.Object.GetMaterial()
 	l := w.Light
-	return m.Lighting(*l, c.Point, c.Eyev, c.Normal)
+	return m.Lighting(*l, c.Point, c.Eyev, c.Normal, false)
 }
 
 //ColorAt returns the color of an intersection
@@ -62,6 +62,19 @@ func (w *World) ColorAt(r ray.Ray) color.Color {
 	}
 	comps := hit.PrepareComputations(r)
 	return w.ShadeHit(comps)
+}
+
+//IsShadowed determines if a point is shadowed in a world
+func (w *World) IsShadowed(p tuple.Tuple) bool {
+	dV := w.Light.Position.Subtract(p)
+	distance := dV.Magnitude()
+	r := ray.New(p, dV.Normalize())
+	intersections := w.Intersect(r)
+	hit := shape.Hit(intersections)
+	if hit != nil && hit.Value < distance {
+		return true
+	}
+	return false
 }
 
 type byValue []shape.Intersection

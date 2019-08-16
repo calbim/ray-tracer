@@ -35,7 +35,7 @@ func TestLightingEyeBetweenLightAndSurface(t *testing.T) {
 	light := light.PointLight(tuple.Point(0, 0, -10), color.White)
 	eyev := tuple.Vector(0, 0, -1)
 	normalv := tuple.Vector(0, 0, -1)
-	result := m.Lighting(light, position, eyev, normalv)
+	result := m.Lighting(light, position, eyev, normalv, false)
 	if !result.Equals(color.New(1.9, 1.9, 1.9)) {
 		t.Errorf("wanted lighting=%v, got %v", color.New(1.9, 1.9, 1.9), result)
 	}
@@ -47,9 +47,9 @@ func TestLightingEyeOffset45BetweenLightAndSurface(t *testing.T) {
 	light := light.PointLight(tuple.Point(0, 0, -10), color.White)
 	eyev := tuple.Vector(0, math.Sqrt(2)/2, -math.Sqrt(2)/2)
 	normalv := tuple.Vector(0, 0, -1)
-	result := m.Lighting(light, position, eyev, normalv)
+	result := m.Lighting(light, position, eyev, normalv, false)
 	if !result.Equals(color.White) {
-		t.Errorf("wanted lighting=%v, got %v", result, color.White)
+		t.Errorf("wanted lighting=%v, got %v", color.White, result)
 	}
 }
 
@@ -59,9 +59,9 @@ func TestLightingEyeInPathOfReflectionVector(t *testing.T) {
 	light := light.PointLight(tuple.Point(0, 10, -10), color.New(1, 1, 1))
 	eyev := tuple.Vector(0, -math.Sqrt(2)/2, -math.Sqrt(2)/2)
 	normalv := tuple.Vector(0, 0, -1)
-	result := m.Lighting(light, position, eyev, normalv)
-	if !result.Equals(color.New(1.6364, 1.6364, 1.6364)){
-		t.Errorf("wanted lighting=%v, got %v", result, color.New(1.6364, 1.6364, 1.6364))
+	result := m.Lighting(light, position, eyev, normalv, false)
+	if !result.Equals(color.New(1.6364, 1.6364, 1.6364)) {
+		t.Errorf("wanted lighting=%v, got %v", color.New(1.6364, 1.6364, 1.6364), result)
 	}
 }
 
@@ -69,10 +69,23 @@ func TestLightingBehindSurface(t *testing.T) {
 	m := New()
 	position := tuple.Point(0, 0, 0)
 	light := light.PointLight(tuple.Point(0, 0, 10), color.New(1, 1, 1))
-	eyev := tuple.Vector(0, 0,-1)
+	eyev := tuple.Vector(0, 0, -1)
 	normalv := tuple.Vector(0, 0, -1)
-	result := m.Lighting(light, position, eyev, normalv)
-	if !result.Equals(color.New(0.1, 0.1, 0.1)){
+	result := m.Lighting(light, position, eyev, normalv, false)
+	if !result.Equals(color.New(0.1, 0.1, 0.1)) {
+		t.Errorf("wanted lighting=%v, got %v", color.New(0.1, 0.1, 0.1), result)
+	}
+}
+
+func TestLightingSurfaceInShadow(t *testing.T) {
+	m := New()
+	position := tuple.Point(0, 0, 0)
+	eyev := tuple.Vector(0, 0, -1)
+	normalv := tuple.Vector(0, 0, -1)
+	light := light.PointLight(tuple.Point(0, 0, -10), color.New(1, 1, 1))
+	inShadow := true
+	result := m.Lighting(light, position, eyev, normalv, inShadow)
+	if !result.Equals(color.New(0.1, 0.1, 0.1)) {
 		t.Errorf("wanted lighting=%v, got %v", result, color.New(0.1, 0.1, 0.1))
 	}
 }

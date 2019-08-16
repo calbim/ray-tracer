@@ -30,7 +30,7 @@ func New() Material {
 }
 
 //Lighting returns the shade of an object under various light properties
-func (m *Material) Lighting(light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple) color.Color {
+func (m *Material) Lighting(light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) color.Color {
 	c := m.Color
 	effectiveColor := c.MultiplyColor(light.Intensity)
 	lightv := light.Position.Subtract(point)
@@ -38,7 +38,7 @@ func (m *Material) Lighting(light light.Light, point tuple.Tuple, eyev tuple.Tup
 	ambient := effectiveColor.Multiply(m.Ambient)
 	lightDotNormal := lightv.DotProduct(normalv)
 	diffuse, specular := color.Black, color.Black
-	if lightDotNormal >= 0 {
+	if lightDotNormal >= 0 && !inShadow {
 		diffuse = effectiveColor.Multiply(m.Diffuse * lightDotNormal)
 		reflectv := lightv.Negate()
 		reflectv = reflectv.Reflect(normalv)

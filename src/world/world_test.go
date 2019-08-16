@@ -115,6 +115,38 @@ func TestColorWhenIntersectionIsBehindRay(t *testing.T) {
 	}
 }
 
+func TestNoShadowWhenNothingIsCollinearWithPointAndLight(t *testing.T) {
+	w := Default()
+	p := tuple.Point(0, 10, 0)
+	if w.IsShadowed(p) {
+		t.Errorf("wanted isShadowed=%v, got %v", false, w.IsShadowed(p))
+	}
+}
+
+func TestShadowObjectBetweenPointAndLight(t *testing.T) {
+	w := Default()
+	p := tuple.Point(10, -10, 10)
+	if !w.IsShadowed(p) {
+		t.Errorf("wanted isShadowed=%v, got %v", true, w.IsShadowed(p))
+	}
+}
+
+func TestNoShadowObjectBehindLight(t *testing.T) {
+	w := Default()
+	p := tuple.Point(-20, 20, -20)
+	if w.IsShadowed(p) {
+		t.Errorf("wanted isShadowed=%v, got %v", false, w.IsShadowed(p))
+	}
+}
+
+func TestNoShadowObjectBehindPoint(t *testing.T) {
+	w := Default()
+	p := tuple.Point(-2, 2, -2)
+	if w.IsShadowed(p) {
+		t.Errorf("wanted isShadowed=%v, got %v", false, w.IsShadowed(p))
+	}
+}
+
 func contains(list []shape.Shape, s shape.Shape) bool {
 	for _, obj := range list {
 		trans := obj.GetTransform()
