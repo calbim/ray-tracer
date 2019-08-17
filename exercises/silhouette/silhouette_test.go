@@ -17,7 +17,8 @@ import (
 func TestSilhouette(t *testing.T) {
 	c := canvas.New(200, 200)
 	sphere := shape.NewSphere()
-	sphere.Material = material.New()
+	m := material.New()
+	sphere.Material = &m
 	sphere.Material.Color = color.New(1, 0.2, 1)
 	light := light.PointLight(tuple.Point(-10, 10, -10), color.White)
 	rayOrigin := tuple.Point(0, 0, -5)
@@ -32,13 +33,13 @@ func TestSilhouette(t *testing.T) {
 			position := tuple.Point(worldX, worldY, wallZ)
 			diff := position.Subtract(rayOrigin)
 			r := ray.New(rayOrigin, diff.Normalize())
-			xs := sphere.Intersect(r)
+			xs := shape.Intersect(sphere, r)
 			hit := shape.Hit(xs)
 			if hit != nil {
 				p := r.Position(hit.Value)
-				normalv := hit.Object.Normal(p)
+				normalv := shape.NormalAt(hit.Object, p)
 				eyev := r.Direction.Negate()
-				color := sphere.Material.Lighting(light, p, eyev, *normalv)
+				color := sphere.Material.Lighting(light, p, eyev, *normalv, false)
 				c.WritePixel(x, y, color)
 			}
 		}
