@@ -147,6 +147,23 @@ func TestNoShadowObjectBehindPoint(t *testing.T) {
 	}
 }
 
+func TestShadeHitOfIntersectionInShadow(t *testing.T) {
+	w := Default()
+	l := light.PointLight(tuple.Point(0, 0, -10), color.New(1, 1, 1))
+	w.Light = &l
+	s1 := shape.NewSphere()
+	s2 := shape.NewSphere()
+	s2.SetTransform(transforms.Translation(0, 0, 10))
+	w.Objects = []shape.Shape{s1, s2}
+	r := ray.New(tuple.Point(0, 0, 5), tuple.Vector(0, 0, 1))
+	i := shape.NewIntersection(4, s2)
+	comps := i.PrepareComputations(r)
+	c := w.ShadeHit(comps)
+	if !c.Equals(color.New(0.1, 0.1, 0.1)) {
+		t.Errorf("wanted color=%v, got %v", color.New(0.1, 0.1, 0.1), c)
+	}
+}
+
 func contains(list []shape.Shape, s shape.Shape) bool {
 	for _, obj := range list {
 		trans := obj.GetTransform()
