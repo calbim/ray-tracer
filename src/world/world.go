@@ -26,7 +26,7 @@ func Default() World {
 	m.Color = color.New(0.8, 1.0, 0.6)
 	m.Diffuse = 0.7
 	m.Specular = 0.2
-	s1.Material = m
+	s1.Material = &m
 	s2 := shape.NewSphere()
 	s2.Transform = transforms.Scaling(0.5, 0.5, 0.5)
 	return World{
@@ -39,7 +39,7 @@ func Default() World {
 func (w *World) Intersect(r ray.Ray) []shape.Intersection {
 	list := []shape.Intersection{}
 	for _, o := range w.Objects {
-		intersections := o.Intersect(r)
+		intersections := shape.Intersect(o, r)
 		list = append(list, intersections...)
 	}
 	sort.Sort(byValue(list))
@@ -48,9 +48,10 @@ func (w *World) Intersect(r ray.Ray) []shape.Intersection {
 
 //ShadeHit returns the shade of a hit
 func (w *World) ShadeHit(c shape.Computation) color.Color {
+	shadowed := w.IsShadowed(c.Overpoint)
 	m := c.Object.GetMaterial()
 	l := w.Light
-	return m.Lighting(*l, c.Point, c.Eyev, c.Normal, false)
+	return m.Lighting(*l, c.Overpoint, c.Eyev, c.Normal, shadowed)
 }
 
 //ColorAt returns the color of an intersection

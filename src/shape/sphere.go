@@ -1,7 +1,6 @@
 package shape
 
 import (
-	"fmt"
 	"math"
 	"time"
 
@@ -17,7 +16,7 @@ import (
 type Sphere struct {
 	ID        int64
 	Transform *matrix.Matrix
-	Material  material.Material
+	Material  *material.Material
 }
 
 //NewSphere returns a sphere with a unique ID
@@ -26,18 +25,12 @@ func NewSphere() *Sphere {
 	return &Sphere{
 		ID:        time.Now().Unix(),
 		Transform: matrix.Identity,
-		Material:  m,
+		Material:  &m,
 	}
 }
 
-//Intersect returns the points at which a ray intersects a sphere
-func (s *Sphere) Intersect(r ray.Ray) []Intersection {
-	inv, err := s.Transform.Inverse()
-	if err != nil {
-		fmt.Printf("got error %v", err)
-		return nil
-	}
-	r = r.Transform(inv)
+//LocalIntersect returns the points at which a ray intersects a sphere
+func (s *Sphere) LocalIntersect(r ray.Ray) []Intersection {
 	sphereToRay := r.Origin.Subtract(tuple.Point(0, 0, 0))
 	a := r.Direction.DotProduct(r.Direction)
 	b := 2 * r.Direction.DotProduct(sphereToRay)
@@ -56,29 +49,19 @@ func (s *Sphere) SetTransform(m *matrix.Matrix) {
 	s.Transform = m
 }
 
-//Normal returns the normal vector at point P on a sphere
-func (s *Sphere) Normal(p tuple.Tuple) *tuple.Tuple {
-	inv, err := s.Transform.Inverse()
-	if err != nil {
-		fmt.Printf("got error %v", err)
-		return nil
-	}
-	objectPoint := inv.MultiplyTuple(p)
-	objectNormal := objectPoint.Subtract(tuple.Point(0, 0, 0))
-	transpose := inv.Transpose()
-	worldNormal := transpose.MultiplyTuple(objectNormal)
-	worldNormal.W = 0
-	n := worldNormal.Normalize()
+//LocalNormalAt returns the normal vector at point P on a sphere
+func (s *Sphere) LocalNormalAt(p tuple.Tuple) *tuple.Tuple {
+	n := p.Subtract(tuple.Point(0, 0, 0))
 	return &n
 }
 
 //GetMaterial returns the material of the sphere
 func (s *Sphere) GetMaterial() *material.Material {
-	return &s.Material
+	return s.Material
 }
 
 //SetMaterial returns the material of the sphere
-func (s *Sphere) SetMaterial(m material.Material) {
+func (s *Sphere) SetMaterial(m *material.Material) {
 	s.Material = m
 }
 

@@ -3,6 +3,8 @@ package world
 import (
 	"testing"
 
+	"github.com/calbim/ray-tracer/src/util"
+
 	"github.com/calbim/ray-tracer/src/ray"
 
 	"github.com/calbim/ray-tracer/src/color"
@@ -26,10 +28,11 @@ func TestDefaultWorld(t *testing.T) {
 
 	m := material.Material{Color: color.New(0.8, 1.0, 0.6), Diffuse: 0.7, Specular: 0.2, Ambient: 0.1, Shininess: 200}
 	s1 := shape.NewSphere()
-	s1.Material = m
+	s1.Material = &m
 
+	m2 := material.New()
 	s2 := shape.NewSphere()
-	s2.Material = material.New()
+	s2.Material = &m2
 	s2.SetTransform(transforms.Scaling(0.5, 0.5, 0.5))
 
 	if *w.Light != light {
@@ -102,11 +105,11 @@ func TestColorWhenIntersectionIsBehindRay(t *testing.T) {
 	m := w.Objects[0].GetMaterial()
 	m.Ambient = 1
 	outer := w.Objects[0]
-	outer.SetMaterial(*m)
+	outer.SetMaterial(m)
 	inner := w.Objects[1]
 	mInner := inner.GetMaterial()
 	mInner.Ambient = 1
-	inner.SetMaterial(*mInner)
+	inner.SetMaterial(mInner)
 
 	r := ray.New(tuple.Point(0, 0, 0.075), tuple.Vector(0, 0, -1))
 	c := w.ColorAt(r)
@@ -161,6 +164,20 @@ func TestShadeHitOfIntersectionInShadow(t *testing.T) {
 	c := w.ShadeHit(comps)
 	if !c.Equals(color.New(0.1, 0.1, 0.1)) {
 		t.Errorf("wanted color=%v, got %v", color.New(0.1, 0.1, 0.1), c)
+	}
+}
+
+func TestHitShouldOffsetPoint(t *testing.T) {
+	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
+	s := shape.NewSphere()
+	s.Transform = transforms.Translation(0, 0, 1)
+	i := shape.NewIntersection(5, s)
+	comps := i.PrepareComputations(r)
+	if !(comps.Overpoint.Z < -util.Eps/2) {
+		t.Errorf("wanted comps.Overpoint.Z to be under %v", -util.Eps/2)
+	}
+	if !(comps.Point.Z > comps.Overpoint.Z) {
+		t.Errorf("wanted comps.Overpoint.Z > comps.Overpoint.Z")
 	}
 }
 

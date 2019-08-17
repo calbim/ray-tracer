@@ -5,6 +5,7 @@ import (
 
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/tuple"
+	"github.com/calbim/ray-tracer/src/util"
 )
 
 //Intersection represents a point where an object is intersected
@@ -53,13 +54,13 @@ func Hit(intersections []Intersection) *Intersection {
 
 // Computation object that contains data about an intersection
 type Computation struct {
-	Value  float64
-	Object Shape
-	Point  tuple.Tuple
-	//Overpoint tuple.Tuple
-	Eyev   tuple.Tuple
-	Normal tuple.Tuple
-	Inside bool
+	Value     float64
+	Object    Shape
+	Point     tuple.Tuple
+	Overpoint tuple.Tuple
+	Eyev      tuple.Tuple
+	Normal    tuple.Tuple
+	Inside    bool
 }
 
 // PrepareComputations calculates the Computation object for an intersection
@@ -67,7 +68,7 @@ func (i *Intersection) PrepareComputations(r ray.Ray) Computation {
 	tValue := i.Value
 	object := i.Object
 	point := r.Position(tValue)
-	normal := object.Normal(point)
+	normal := NormalAt(object, point)
 	eyev := r.Direction.Negate()
 	inside := false
 	if normal.DotProduct(eyev) < 0 {
@@ -77,12 +78,12 @@ func (i *Intersection) PrepareComputations(r ray.Ray) Computation {
 	}
 
 	return Computation{
-		Value:  tValue,
-		Object: object,
-		Point:  point,
-		//Overpoint: (point.Add(normal.Multiply(util.Eps))),
-		Eyev:   eyev,
-		Normal: *normal,
-		Inside: inside,
+		Value:     tValue,
+		Object:    object,
+		Point:     point,
+		Overpoint: (point.Add(normal.Multiply(util.Eps))),
+		Eyev:      eyev,
+		Normal:    *normal,
+		Inside:    inside,
 	}
 }

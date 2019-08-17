@@ -16,7 +16,7 @@ import (
 func TestSphereIntersection(t *testing.T) {
 	s := NewSphere()
 	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 2 || xs[0].Value != 4 || xs[1].Value != 6 {
 		t.Errorf("wanted intersection points to be %v and %v, got %v and %v", 4.0, 6.0, xs[0], xs[1])
 	}
@@ -25,7 +25,7 @@ func TestSphereIntersection(t *testing.T) {
 func TestSphereIntersectionTangent(t *testing.T) {
 	s := NewSphere()
 	r := ray.New(tuple.Point(0, 1, -5), tuple.Vector(0, 0, 1))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 2 || xs[0].Value != 5 || xs[1].Value != 5 {
 		t.Errorf("wanted intersection points to be %v and %v, got %v and %v", 5.0, 5.0, xs[0], xs[1])
 	}
@@ -34,7 +34,7 @@ func TestSphereIntersectionTangent(t *testing.T) {
 func TestSphereRayMisses(t *testing.T) {
 	s := NewSphere()
 	r := ray.New(tuple.Point(0, 2, -5), tuple.Vector(0, 0, 1))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 0 {
 		t.Errorf("wamted 0 intersections, got %v", len(xs))
 	}
@@ -43,7 +43,7 @@ func TestSphereRayMisses(t *testing.T) {
 func TestRayInsideSphere(t *testing.T) {
 	s := NewSphere()
 	r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 0, 1))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 2 || xs[0].Value != -1 || xs[1].Value != 1 {
 		t.Errorf("wanted intersections points to be %v and %v, got %v and %v", -1, 1, xs[0], xs[1])
 	}
@@ -51,7 +51,7 @@ func TestRayInsideSphere(t *testing.T) {
 func TestSphereBehindRay(t *testing.T) {
 	s := NewSphere()
 	r := ray.New(tuple.Point(0, 0, 5), tuple.Vector(0, 0, 1))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 2 || xs[0].Value != -6 || xs[1].Value != -4 {
 		t.Errorf("wanted intersections points to be %v and %v, got %v and %v", -6, -4, xs[0], xs[1])
 	}
@@ -83,7 +83,7 @@ func TestIntersections(t *testing.T) {
 func TestIntersectionSetsObject(t *testing.T) {
 	r := ray.New(tuple.Point(0, 0, 5), tuple.Vector(0, 0, 1))
 	s := NewSphere()
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 2 {
 		t.Errorf("wanted %v intersections, got %v", 2, len(xs))
 	}
@@ -137,28 +137,11 @@ func TestHitMultipleIntersections(t *testing.T) {
 		t.Errorf("hit should be %v", i4)
 	}
 }
-
-func TestSphereTransformation(t *testing.T) {
-	s := NewSphere()
-	if !s.Transform.Equals(matrix.Identity) {
-		t.Errorf("wanted transform=%v, got %v", matrix.Identity, s.Transform)
-	}
-}
-
-func TestChangeTransformation(t *testing.T) {
-	s := NewSphere()
-	transform := transforms.Translation(2, 3, 4)
-	s.SetTransform(transform)
-	if !s.Transform.Equals(transform) {
-		t.Errorf("wanted transform=%v, got %v", transform, s.Transform)
-	}
-}
-
 func TestIntersectScaledSphere(t *testing.T) {
 	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
 	s := NewSphere()
 	s.SetTransform(transforms.Scaling(2, 2, 2))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 2 {
 		t.Errorf("wanted %v intersections, got %v", 2, len(xs))
 	}
@@ -171,7 +154,7 @@ func TestIntersectTranslatedSphere(t *testing.T) {
 	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
 	s := NewSphere()
 	s.SetTransform(transforms.Translation(5, 0, 0))
-	xs := s.Intersect(r)
+	xs := Intersect(s, r)
 	if len(xs) != 0 {
 		t.Errorf("wanted %v intersections, got %v", 0, len(xs))
 	}
@@ -179,7 +162,7 @@ func TestIntersectTranslatedSphere(t *testing.T) {
 
 func TestNormalXAxis(t *testing.T) {
 	s := NewSphere()
-	n := s.Normal(tuple.Point(1, 0, 0))
+	n := NormalAt(s, tuple.Point(1, 0, 0))
 	if n == nil {
 		t.Errorf("normal is nil")
 	}
@@ -190,7 +173,7 @@ func TestNormalXAxis(t *testing.T) {
 
 func TestNormalYAxis(t *testing.T) {
 	s := NewSphere()
-	n := s.Normal(tuple.Point(0, 1, 0))
+	n := NormalAt(s, tuple.Point(0, 1, 0))
 	if n == nil {
 		t.Errorf("normal is nil")
 	}
@@ -201,7 +184,7 @@ func TestNormalYAxis(t *testing.T) {
 
 func TestNormalZAxis(t *testing.T) {
 	s := NewSphere()
-	n := s.Normal(tuple.Point(0, 0, 1))
+	n := NormalAt(s, tuple.Point(0, 0, 1))
 	if n == nil {
 		t.Errorf("normal is nil")
 	}
@@ -212,7 +195,7 @@ func TestNormalZAxis(t *testing.T) {
 
 func TestNormalNonAxial(t *testing.T) {
 	s := NewSphere()
-	n := s.Normal(tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
+	n := NormalAt(s, tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3))
 	if n == nil {
 		t.Errorf("normal is nil")
 	}
@@ -224,7 +207,7 @@ func TestNormalNonAxial(t *testing.T) {
 func TestNormalIsNormalized(t *testing.T) {
 	s := NewSphere()
 	p := tuple.Point(math.Sqrt(3)/3, math.Sqrt(3)/3, math.Sqrt(3)/3)
-	n := s.Normal(p)
+	n := NormalAt(s, p)
 	if !n.Equals(n.Normalize()) {
 		t.Errorf("wanted n=%v, got %v", n.Normalize(), n)
 	}
@@ -233,7 +216,7 @@ func TestNormalIsNormalized(t *testing.T) {
 func TestNormalTranslatedSphere(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(transforms.Translation(0, 1, 0))
-	n := s.Normal(tuple.Point(0, 1.70711, -0.70711))
+	n := NormalAt(s, tuple.Point(0, 1.70711, -0.70711))
 	if !n.Equals(tuple.Vector(0, 0.70711, -0.70711)) {
 		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 0.70711, -0.70711), n)
 	}
@@ -242,28 +225,10 @@ func TestNormalTranslatedSphere(t *testing.T) {
 func TestNormalTransformedSphere(t *testing.T) {
 	s := NewSphere()
 	s.SetTransform(transforms.Chain(transforms.RotationZ(math.Pi/5), transforms.Scaling(1, 0.5, 1)))
-	n := s.Normal(tuple.Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
+	n := NormalAt(s, tuple.Point(0, math.Sqrt(2)/2, -math.Sqrt(2)/2))
 	expected := tuple.Vector(0, 0.97014, -0.24254)
 	if !n.Equals(expected) {
 		t.Errorf("wanted normal=%v, got %v", expected, n)
-	}
-}
-
-func TestSphereHasDefaultMaterial(t *testing.T) {
-	s := NewSphere()
-	m := s.Material
-	if m != material.New() {
-		t.Errorf("wanted material=%v, got %v", material.New(), m)
-	}
-}
-
-func TestSphereCanBeAssignedMaterial(t *testing.T) {
-	s := NewSphere()
-	m := material.New()
-	m.Ambient = 1
-	s.Material = m
-	if s.Material != m {
-		t.Errorf("wanted material to be %v, got %v", m, s.Material)
 	}
 }
 
@@ -318,5 +283,122 @@ func TestHitWhenIntersectionInside(t *testing.T) {
 	}
 	if comp.Normal != tuple.Vector(0, 0, -1) {
 		t.Errorf("wanted normal=%v, got %v", tuple.Point(0, 0, -1), comp.Point)
+	}
+}
+
+type TestShape struct {
+	Transform *matrix.Matrix
+	Material  *material.Material
+	SavedRay  *ray.Ray
+}
+
+func NewTestShape() *TestShape {
+	m := material.New()
+	return &TestShape{
+		Transform: matrix.Identity,
+		Material:  &m,
+	}
+}
+func (ts *TestShape) GetMaterial() *material.Material {
+	return ts.Material
+}
+
+func (ts *TestShape) GetTransform() *matrix.Matrix {
+	return ts.Transform
+}
+func (ts *TestShape) SetTransform(m *matrix.Matrix) {
+	ts.Transform = m
+}
+
+func (ts *TestShape) SetMaterial(m *material.Material) {
+	ts.Material = m
+}
+
+func (ts *TestShape) LocalNormalAt(p tuple.Tuple) *tuple.Tuple {
+	n := tuple.Vector(p.X, p.Y, p.Z)
+	return &n
+}
+
+func (ts *TestShape) LocalIntersect(r ray.Ray) []Intersection {
+	ts.SavedRay = &r
+	return nil
+}
+
+func TestDefaultTestShape(t *testing.T) {
+	ts := NewTestShape()
+	if !ts.Transform.Equals(matrix.Identity) {
+		t.Errorf("wanted default transform=%v, got %v", matrix.Identity, ts.Transform)
+	}
+}
+
+func TestAssignTransformToTestShape(t *testing.T) {
+	ts := NewTestShape()
+	trans := transforms.Translation(2, 3, 4)
+	ts.SetTransform(trans)
+	if !ts.Transform.Equals(trans) {
+		t.Errorf("wanted assigned transform=%v, got %v", trans, ts.Transform)
+	}
+}
+
+func TestMaterialDefaultTestShape(t *testing.T) {
+	ts := NewTestShape()
+	m := material.New()
+	if *ts.Material != m {
+		t.Errorf("wanted default transform=%v, got %v", m, ts.Material)
+	}
+}
+
+func TestAssignMaterialTestShape(t *testing.T) {
+	ts := NewTestShape()
+	m := material.New()
+	m.Ambient = 1
+	ts.SetMaterial(&m)
+	if *ts.Material != m {
+		t.Errorf("wanted assigned transform=%v, got %v", m, ts.Material)
+	}
+}
+
+func TestIntersectScaledShapeWithRay(t *testing.T) {
+	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
+	s := NewTestShape()
+	s.SetTransform(transforms.Scaling(2, 2, 2))
+	_ = Intersect(s, r)
+	if s.SavedRay.Origin != tuple.Point(0, 0, -2.5) {
+		t.Errorf("wanted saved ray origin=%v, got %v", tuple.Point(0, 0, -2.5), s.SavedRay.Origin)
+	}
+	if s.SavedRay.Direction != tuple.Vector(0, 0, 0.5) {
+		t.Errorf("wanted saved ray direction=%v, got %v", tuple.Vector(0, 0, 0.5), s.SavedRay.Direction)
+	}
+}
+
+func TestIntersectTranslatedShapeWithRay(t *testing.T) {
+	r := ray.New(tuple.Point(0, 0, -5), tuple.Vector(0, 0, 1))
+	s := NewTestShape()
+	s.SetTransform(transforms.Translation(5, 0, 0))
+	_ = Intersect(s, r)
+	if s.SavedRay.Origin != tuple.Point(-5, 0, -5) {
+		t.Errorf("wanted saved ray origin=%v, got %v", tuple.Point(-5, 0, -5), s.SavedRay.Origin)
+	}
+	if s.SavedRay.Direction != tuple.Vector(0, 0, 1) {
+		t.Errorf("wanted saved ray direction=%v, got %v", tuple.Vector(0, 0, 1), s.SavedRay.Direction)
+	}
+}
+
+func TestNormalOnTranslatedSphere(t *testing.T) {
+	s := NewTestShape()
+	s.SetTransform(transforms.Translation(0, 1, 0))
+	n := NormalAt(s, tuple.Point(0, 1.70711, -0.70711))
+	if !n.Equals(tuple.Vector(0, 0.70711, -0.70711)) {
+		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 0.70711, -0.70711), n)
+	}
+}
+
+func TestNormalOnTranformedSphere(t *testing.T) {
+	s := NewTestShape()
+	m := transforms.Chain(transforms.RotationZ(math.Pi/5), transforms.Scaling(1, 0.5, 1))
+	s.SetTransform(m)
+	n := NormalAt(s, tuple.Point(0, math.Sqrt2/2, -math.Sqrt2/2))
+	if !n.Equals(tuple.Vector(0, 0.97014, -0.24254)) {
+		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 0.97014, -0.24254), n)
 	}
 }
