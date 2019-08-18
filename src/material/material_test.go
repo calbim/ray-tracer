@@ -109,3 +109,22 @@ func TestLightingWithPattern(t *testing.T) {
 		t.Errorf("wanted c2=%v, got %v", color.Black, c2)
 	}
 }
+
+func TestLightingWithPatternApplied(t *testing.T) {
+	m := New()
+	m.SetPattern(pattern.Stripe(color.White, color.Black))
+	m.Ambient = 1
+	m.Diffuse = 0
+	m.Specular = 0
+	eyev := tuple.Vector(0, 0, -1)
+	normalv := tuple.Vector(0, 0, -1)
+	l := light.PointLight(tuple.Point(0, 0, -10), color.White)
+	c1 := m.Lighting(l, tuple.Point(0.9, 0, 0), eyev, normalv, false)
+	c2 := m.Lighting(l, tuple.Point(1.1, 0, 0), eyev, normalv, false)
+	if !c1.Equals(color.White) {
+		t.Errorf("wanted c1=%v, got %v", color.White, c1)
+	}
+	if !c2.Equals(color.Black) {
+		t.Errorf("wanted c2=%v, got %v", color.White, c2)
+	}
+}
