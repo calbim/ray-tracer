@@ -67,9 +67,6 @@ func (c Camera) Render(w world.World) *canvas.Canvas {
 	image := canvas.New(int(c.HSize), int(c.VSize))
 	for y := 0; y < int(c.VSize); y++ {
 		for x := 0; x < int(c.HSize); x++ {
-			if x == 73 && y == 22 {
-				x = 73
-			}
 			r := c.RayForPixel(x, y)
 			col := w.ColorAt(*r)
 			image.WritePixel(x, y, col)

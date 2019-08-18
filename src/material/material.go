@@ -3,6 +3,8 @@ package material
 import (
 	"math"
 
+	"github.com/calbim/ray-tracer/src/pattern"
+
 	"github.com/calbim/ray-tracer/src/tuple"
 
 	"github.com/calbim/ray-tracer/src/color"
@@ -11,11 +13,13 @@ import (
 
 //Material represents the properties of a material as per the phong reflection model
 type Material struct {
-	Color     color.Color
-	Ambient   float64
-	Diffuse   float64
-	Specular  float64
-	Shininess float64
+	Color      color.Color
+	Ambient    float64
+	Diffuse    float64
+	Specular   float64
+	Shininess  float64
+	Pattern    *pattern.Pattern
+	hasPattern bool
 }
 
 //New returns a default material
@@ -29,9 +33,18 @@ func New() Material {
 	}
 }
 
+//SetPattern sets a pattern
+func (m *Material) SetPattern(p *pattern.Pattern) {
+	m.Pattern = p
+	m.hasPattern = true
+}
+
 //Lighting returns the shade of an object under various light properties
 func (m *Material) Lighting(light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) color.Color {
 	c := m.Color
+	if m.hasPattern {
+		c = *m.Pattern.StripeAt(point)
+	}
 	effectiveColor := c.MultiplyColor(light.Intensity)
 	lightv := light.Position.Subtract(point)
 	lightv = lightv.Normalize()

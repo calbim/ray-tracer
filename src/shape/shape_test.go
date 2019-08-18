@@ -402,3 +402,68 @@ func TestNormalOnTranformedSphere(t *testing.T) {
 		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 0.97014, -0.24254), n)
 	}
 }
+
+func TestPlaneNormalIsConstantEverywhere(t *testing.T) {
+	p := NewPlane()
+	n1 := p.LocalNormalAt(tuple.Point(0, 0, 0))
+	n2 := p.LocalNormalAt(tuple.Point(10, 0, -10))
+	n3 := p.LocalNormalAt(tuple.Point(-5, 0, 150))
+	if !n1.Equals(tuple.Vector(0, 1, 0)) {
+		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 1, 0), n1)
+	}
+	if !n2.Equals(tuple.Vector(0, 1, 0)) {
+		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 1, 0), n2)
+	}
+	if !n3.Equals(tuple.Vector(0, 1, 0)) {
+		t.Errorf("wanted normal=%v, got %v", tuple.Vector(0, 1, 0), n3)
+	}
+
+}
+
+func TestIntersectRayParallelToPlane(t *testing.T) {
+	p := NewPlane()
+	r := ray.New(tuple.Point(0, 10, 0), tuple.Vector(0, 0, 1))
+	xs := p.LocalIntersect(r)
+	if len(xs) != 0 {
+		t.Errorf("wanted 0 intersections, got %v", len(xs))
+	}
+}
+
+func TestIntersectCoplanarRay(t *testing.T) {
+	p := NewPlane()
+	r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 0, 1))
+	xs := p.LocalIntersect(r)
+	if len(xs) != 0 {
+		t.Errorf("wanted 0 intersections, got %v", len(xs))
+	}
+}
+
+func TestRayIntersectPlaneFromAbove(t *testing.T) {
+	p := NewPlane()
+	r := ray.New(tuple.Point(0, 1, 0), tuple.Vector(0, -1, 0))
+	xs := p.LocalIntersect(r)
+	if len(xs) != 1 {
+		t.Errorf("wanted 1 intersection, got %v", len(xs))
+	}
+	if xs[0].Value != 1 {
+		t.Errorf("wanted intersection value=%v, got %v", 1, xs[0].Value)
+	}
+	if xs[0].Object != p {
+		t.Errorf("wanted intersection value=%v, got %v", 1, xs[0].Object)
+	}
+}
+
+func TestRayIntersectPlaneFromBelow(t *testing.T) {
+	p := NewPlane()
+	r := ray.New(tuple.Point(0, -1, 0), tuple.Vector(0, 1, 0))
+	xs := p.LocalIntersect(r)
+	if len(xs) != 1 {
+		t.Errorf("wanted 1 intersection, got %v", len(xs))
+	}
+	if xs[0].Value != 1 {
+		t.Errorf("wanted intersection value=%v, got %v", 1, xs[0].Value)
+	}
+	if xs[0].Object != p {
+		t.Errorf("wanted intersection value=%v, got %v", 1, xs[0].Object)
+	}
+}
