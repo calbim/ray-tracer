@@ -9,8 +9,14 @@ import (
 	"github.com/calbim/ray-tracer/src/tuple"
 )
 
-//Pattern struct
-type Pattern struct {
+//Pattern interface
+type Pattern interface {
+	GetTransform() *matrix.Matrix
+	PatternAt(point tuple.Tuple) *color.Color
+}
+
+//Stripe struct
+type Stripe struct {
 	a         color.Color
 	b         color.Color
 	Transform *matrix.Matrix
@@ -28,24 +34,34 @@ func NewObject() Object {
 	}
 }
 
-//Stripe returns a stripe pattern alternating between colors a and b
-func Stripe(a color.Color, b color.Color) *Pattern {
-	return &Pattern{a: a, b: b, Transform: matrix.Identity}
+//SetTransform sets an object's transform
+func (o *Object) SetTransform(transform *matrix.Matrix) {
+	o.Transform = transform
 }
 
-//StripeAt returns the color of a stripe at a point
-func (p *Pattern) StripeAt(point tuple.Tuple) *color.Color {
+//NewStripe returns a stripe pattern
+func NewStripe(a color.Color, b color.Color) *Stripe {
+	return &Stripe{a: a, b: b, Transform: matrix.Identity}
+}
+
+//GetTransform returns a stripe's pattern
+func (p *Stripe) GetTransform() *matrix.Matrix {
+	return p.Transform
+}
+
+//PatternAt returns the color of a stripe at a point
+func (p *Stripe) PatternAt(point tuple.Tuple) *color.Color {
 	if int(math.Floor(point.X))%2 == 0 {
 		return &p.a
 	}
 	return &p.b
 }
 
-//StripeAtObject returns the color of a stripe at a point on an object
-func (p *Pattern) StripeAtObject(o Object, point tuple.Tuple) *color.Color {
+//AtObject returns the color of a stripe at a point on an object
+func AtObject(p Pattern, o Object, point tuple.Tuple) *color.Color {
 	oInv, _ := o.Transform.Inverse()
 	point = oInv.MultiplyTuple(point)
-	pInv, _ := p.Transform.Inverse()
+	pInv, _ := p.GetTransform().Inverse()
 	point = pInv.MultiplyTuple(point)
-	return p.StripeAt(point)
+	return p.PatternAt(point)
 }

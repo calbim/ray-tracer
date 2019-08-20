@@ -93,7 +93,7 @@ func TestLightingSurfaceInShadow(t *testing.T) {
 
 func TestLightingWithPattern(t *testing.T) {
 	m := New()
-	m.SetPattern(pattern.Stripe(color.White, color.Black))
+	m.SetPattern(pattern.NewStripe(color.White, color.Black))
 	m.Ambient = 1
 	m.Diffuse = 0
 	m.Specular = 0
@@ -112,7 +112,7 @@ func TestLightingWithPattern(t *testing.T) {
 
 func TestLightingWithPatternApplied(t *testing.T) {
 	m := New()
-	m.SetPattern(pattern.Stripe(color.White, color.Black))
+	m.SetPattern(pattern.NewStripe(color.White, color.Black))
 	m.Ambient = 1
 	m.Diffuse = 0
 	m.Specular = 0

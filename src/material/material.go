@@ -34,8 +34,8 @@ func New() Material {
 }
 
 //SetPattern sets a pattern
-func (m *Material) SetPattern(p *pattern.Pattern) {
-	m.Pattern = p
+func (m *Material) SetPattern(p pattern.Pattern) {
+	m.Pattern = &p
 	m.hasPattern = true
 }
 
@@ -43,7 +43,8 @@ func (m *Material) SetPattern(p *pattern.Pattern) {
 func (m *Material) Lighting(object pattern.Object, light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) color.Color {
 	c := m.Color
 	if m.hasPattern {
-		c = *m.Pattern.StripeAtObject(object, point)
+		tmp := pattern.AtObject(*m.Pattern, object, point)
+		c = *tmp
 	}
 	effectiveColor := c.MultiplyColor(light.Intensity)
 	lightv := light.Position.Subtract(point)
