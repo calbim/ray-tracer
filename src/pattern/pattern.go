@@ -15,8 +15,22 @@ type Pattern interface {
 	PatternAt(point tuple.Tuple) *color.Color
 }
 
-//Stripe struct
+//Stripe pattern
 type Stripe struct {
+	a         color.Color
+	b         color.Color
+	Transform *matrix.Matrix
+}
+
+//Gradient pattern
+type Gradient struct {
+	a         color.Color
+	b         color.Color
+	Transform *matrix.Matrix
+}
+
+//Ring pattern
+type Ring struct {
 	a         color.Color
 	b         color.Color
 	Transform *matrix.Matrix
@@ -44,7 +58,7 @@ func NewStripe(a color.Color, b color.Color) *Stripe {
 	return &Stripe{a: a, b: b, Transform: matrix.Identity}
 }
 
-//GetTransform returns a stripe's pattern
+//GetTransform returns a stripe's transformation matrix
 func (p *Stripe) GetTransform() *matrix.Matrix {
 	return p.Transform
 }
@@ -52,6 +66,42 @@ func (p *Stripe) GetTransform() *matrix.Matrix {
 //PatternAt returns the color of a stripe at a point
 func (p *Stripe) PatternAt(point tuple.Tuple) *color.Color {
 	if int(math.Floor(point.X))%2 == 0 {
+		return &p.a
+	}
+	return &p.b
+}
+
+//NewGradient returns a gradient pattern
+func NewGradient(a color.Color, b color.Color) *Gradient {
+	return &Gradient{a: a, b: b, Transform: matrix.Identity}
+}
+
+//GetTransform returns a gradient's transformation matrix
+func (p *Gradient) GetTransform() *matrix.Matrix {
+	return p.Transform
+}
+
+//PatternAt returns the color of a gradient at a point
+func (p *Gradient) PatternAt(point tuple.Tuple) *color.Color {
+	diff := p.b.Subtract(p.a)
+	c := p.a.Add(diff.Multiply(point.X - math.Floor(point.X)))
+	return &c
+}
+
+//NewRing returns a gradient pattern
+func NewRing(a color.Color, b color.Color) *Ring {
+	return &Ring{a: a, b: b, Transform: matrix.Identity}
+}
+
+//GetTransform returns a gradient's transformation matrix
+func (p *Ring) GetTransform() *matrix.Matrix {
+	return p.Transform
+}
+
+//PatternAt returns the color of a gradient at a point
+func (p *Ring) PatternAt(point tuple.Tuple) *color.Color {
+	v := int(math.Floor(math.Sqrt(point.X*point.X + point.Z*point.Z)))
+	if v%2 == 0 {
 		return &p.a
 	}
 	return &p.b

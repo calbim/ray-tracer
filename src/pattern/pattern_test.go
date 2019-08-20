@@ -93,7 +93,7 @@ func TestStripesWithObjectAndPatternTransformation(t *testing.T) {
 	o.Transform = transforms.Scaling(2, 2, 2)
 	p := NewStripe(color.White, color.Black)
 	p.Transform = transforms.Translation(0.5, 0, 0)
-	c := AtObject(p,o, tuple.Point(2.5, 0, 0))
+	c := AtObject(p, o, tuple.Point(2.5, 0, 0))
 	if !c.Equals(color.White) {
 		t.Errorf("wanted c=%v, got %v", color.White, c)
 	}
@@ -166,5 +166,45 @@ func TestPatternWithObjectAndPatterntTransformation(t *testing.T) {
 	c := p.PatternAtObject(o, tuple.Point(2.5, 3, 3.5))
 	if !c.Equals(color.New(0.75, 0.5, 0.25)) {
 		t.Errorf("wanted color=%v, got %v", color.New(0.75, 0.5, 0.25), c)
+	}
+}
+
+func TestGradientLinearlyInterpolatesBetweenColors(t *testing.T) {
+	p := NewGradient(color.White, color.Black)
+	c := p.PatternAt(tuple.Point(0, 0, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(0.25, 0, 0))
+	if !c.Equals(color.New(0.75, 0.75, 0.75)) {
+		t.Errorf("wanted color to be %v, got %v", color.New(0.75, 0.75, 0.75), c)
+	}
+	c = p.PatternAt(tuple.Point(0.5, 0, 0))
+	if !c.Equals(color.New(0.5, 0.5, 0.5)) {
+		t.Errorf("wanted color to be %v, got %v", color.New(0.5, 0.5, 0.5), c)
+	}
+	c = p.PatternAt(tuple.Point(0.75, 0, 0))
+	if !c.Equals(color.New(0.25, 0.25, 0.25)) {
+		t.Errorf("wanted color to be %v, got %v", color.New(0.25, 0.25, 0.25), c)
+	}
+}
+
+func TestRingExtendsInXAndZ(t *testing.T) {
+	p := NewRing(color.White, color.Black)
+	c := p.PatternAt(tuple.Point(0, 0, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(1, 0, 0))
+	if !c.Equals(color.Black) {
+		t.Errorf("wanted color to be %v, got %v", color.Black, c)
+	}
+	c = p.PatternAt(tuple.Point(0, 0, 1))
+	if !c.Equals(color.Black) {
+		t.Errorf("wanted color to be %v, got %v", color.Black, c)
+	}
+	c = p.PatternAt(tuple.Point(0.708, 0, 0.708))
+	if !c.Equals(color.Black) {
+		t.Errorf("wanted color to be %v, got %v", color.Black, c)
 	}
 }
