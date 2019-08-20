@@ -115,6 +115,14 @@ func (tp *TestPattern) GetTransform() *matrix.Matrix {
 func (tp *TestPattern) SetTransform(transform *matrix.Matrix) {
 	tp.Transform = transform
 }
+
+func (tp *TestPattern) PatternAtObject(o Object, point tuple.Tuple) color.Color {
+	oInv, _ := o.Transform.Inverse()
+	point = oInv.MultiplyTuple(point)
+	pInv, _ := tp.Transform.Inverse()
+	point = pInv.MultiplyTuple(point)
+	return color.New(point.X, point.Y, point.Z)
+}
 func TestDefaultPatternTransformation(t *testing.T) {
 	p := NewTestPattern()
 	if !p.GetTransform().Equals(matrix.Identity) {
@@ -127,5 +135,15 @@ func TestAssignPatternTransformation(t *testing.T) {
 	p.SetTransform(transforms.Translation(1, 2, 3))
 	if !p.GetTransform().Equals(transforms.Translation(1, 2, 3)) {
 		t.Errorf("wanted assigned pattern transformation to be %v, got %v", transforms.Translation(1, 2, 3), p.GetTransform())
+	}
+}
+
+func TestPatternWithObjectTransformation(t *testing.T) {
+	o := NewObject()
+	o.Transform = transforms.Scaling(2, 2, 2)
+	p := NewTestPattern()
+	c := p.PatternAtObject(o, tuple.Point(2, 3, 4))
+	if !c.Equals(color.New(1, 1.5, 2)) {
+		t.Errorf("wanted color=%v, got %v", color.New(1, 1.5, 2), c)
 	}
 }
