@@ -3,6 +3,8 @@ package pattern
 import (
 	"testing"
 
+	"github.com/calbim/ray-tracer/src/matrix"
+
 	"github.com/calbim/ray-tracer/src/color"
 	"github.com/calbim/ray-tracer/src/transforms"
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -94,5 +96,36 @@ func TestStripesWithObjectAndPatternTransformation(t *testing.T) {
 	c := p.StripeAtObject(o, tuple.Point(2.5, 0, 0))
 	if !c.Equals(color.White) {
 		t.Errorf("wanted c=%v, got %v", color.White, c)
+	}
+}
+
+type TestPattern struct {
+	Transform *matrix.Matrix
+}
+
+func NewTestPattern() *TestPattern {
+	return &TestPattern{
+		Transform: matrix.Identity,
+	}
+}
+func (tp *TestPattern) GetTransform() *matrix.Matrix {
+	return tp.Transform
+}
+
+func (tp *TestPattern) SetTransform(transform *matrix.Matrix) {
+	tp.Transform = transform
+}
+func TestDefaultPatternTransformation(t *testing.T) {
+	p := NewTestPattern()
+	if !p.GetTransform().Equals(matrix.Identity) {
+		t.Errorf("wanted pattern default transformation to be %v, got %v", matrix.Identity, p.GetTransform())
+	}
+}
+
+func TestAssignPatternTransformation(t *testing.T) {
+	p := NewTestPattern()
+	p.SetTransform(transforms.Translation(1, 2, 3))
+	if !p.GetTransform().Equals(transforms.Translation(1, 2, 3)) {
+		t.Errorf("wanted assigned pattern transformation to be %v, got %v", transforms.Translation(1, 2, 3), p.GetTransform())
 	}
 }

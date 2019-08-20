@@ -40,10 +40,10 @@ func (m *Material) SetPattern(p *pattern.Pattern) {
 }
 
 //Lighting returns the shade of an object under various light properties
-func (m *Material) Lighting(light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) color.Color {
+func (m *Material) Lighting(object pattern.Object, light light.Light, point tuple.Tuple, eyev tuple.Tuple, normalv tuple.Tuple, inShadow bool) color.Color {
 	c := m.Color
 	if m.hasPattern {
-		c = *m.Pattern.StripeAt(point)
+		c = *m.Pattern.StripeAtObject(object, point)
 	}
 	effectiveColor := c.MultiplyColor(light.Intensity)
 	lightv := light.Position.Subtract(point)

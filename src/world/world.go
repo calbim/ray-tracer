@@ -6,6 +6,7 @@ import (
 	"github.com/calbim/ray-tracer/src/color"
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
+	"github.com/calbim/ray-tracer/src/pattern"
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/shape"
 	"github.com/calbim/ray-tracer/src/transforms"
@@ -51,7 +52,7 @@ func (w *World) ShadeHit(c shape.Computation) color.Color {
 	shadowed := w.IsShadowed(c.Overpoint)
 	m := c.Object.GetMaterial()
 	l := w.Light
-	return m.Lighting(*l, c.Overpoint, c.Eyev, c.Normal, shadowed)
+	return m.Lighting(getPatternObject(c.Object), *l, c.Overpoint, c.Eyev, c.Normal, shadowed)
 }
 
 //ColorAt returns the color of an intersection
@@ -88,4 +89,10 @@ func (s byValue) Swap(i, j int) {
 }
 func (s byValue) Less(i, j int) bool {
 	return s[i].Value < s[j].Value
+}
+
+func getPatternObject(s shape.Shape) pattern.Object {
+	o := pattern.NewObject()
+	o.Transform = s.GetTransform()
+	return o
 }
