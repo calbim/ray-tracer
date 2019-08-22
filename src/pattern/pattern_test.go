@@ -208,3 +208,51 @@ func TestRingExtendsInXAndZ(t *testing.T) {
 		t.Errorf("wanted color to be %v, got %v", color.Black, c)
 	}
 }
+
+func TestCheckersShouldRepeatInX(t *testing.T) {
+	p := NewCheckers(color.White, color.Black)
+	c := p.PatternAt(tuple.Point(0, 0, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(0.99, 0, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(1.01, 0, 0))
+	if !c.Equals(color.Black) {
+		t.Errorf("wanted color to be %v, got %v", color.Black, c)
+	}
+}
+
+func TestCheckersShouldRepeatInY(t *testing.T) {
+	p := NewCheckers(color.White, color.Black)
+	c := p.PatternAt(tuple.Point(0, 0, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(0, 0.99, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(0, 1.01, 0))
+	if !c.Equals(color.Black) {
+		t.Errorf("wanted color to be %v, got %v", color.Black, c)
+	}
+}
+
+func TestCheckersShouldRepeatInZ(t *testing.T) {
+	p := NewCheckers(color.White, color.Black)
+	c := p.PatternAt(tuple.Point(0, 0, 0))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(0, 0, 0.99))
+	if !c.Equals(color.White) {
+		t.Errorf("wanted color to be %v, got %v", color.White, c)
+	}
+	c = p.PatternAt(tuple.Point(0, 0, 1.01))
+	if !c.Equals(color.Black) {
+		t.Errorf("wanted color to be %v, got %v", color.Black, c)
+	}
+}

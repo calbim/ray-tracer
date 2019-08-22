@@ -36,6 +36,13 @@ type Ring struct {
 	Transform *matrix.Matrix
 }
 
+//Checkers pattern
+type Checkers struct {
+	a         color.Color
+	b         color.Color
+	Transform *matrix.Matrix
+}
+
 //Object struct
 type Object struct {
 	Transform *matrix.Matrix
@@ -101,6 +108,25 @@ func (p *Ring) GetTransform() *matrix.Matrix {
 //PatternAt returns the color of a gradient at a point
 func (p *Ring) PatternAt(point tuple.Tuple) *color.Color {
 	v := int(math.Floor(math.Sqrt(point.X*point.X + point.Z*point.Z)))
+	if v%2 == 0 {
+		return &p.a
+	}
+	return &p.b
+}
+
+//NewCheckers returns a gradient pattern
+func NewCheckers(a color.Color, b color.Color) *Checkers {
+	return &Checkers{a: a, b: b, Transform: matrix.Identity}
+}
+
+//GetTransform returns a gradient's transformation matrix
+func (p *Checkers) GetTransform() *matrix.Matrix {
+	return p.Transform
+}
+
+//PatternAt returns the color of a gradient at a point
+func (p *Checkers) PatternAt(point tuple.Tuple) *color.Color {
+	v := int(math.Floor(point.X) + math.Floor(point.Y) + math.Floor(point.Z))
 	if v%2 == 0 {
 		return &p.a
 	}
