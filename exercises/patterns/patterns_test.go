@@ -20,21 +20,25 @@ import (
 func TestPatternScene(t *testing.T) {
 	floor := shape.NewPlane()
 	m := material.New()
-	m.SetPattern(pattern.NewCheckers(color.FromHex("ff69b4ff"), color.White))
+	p := pattern.NewRing(color.FromHex("ffff00ff"), color.Black)
+	m.SetPattern(p)
 	floor.SetMaterial(&m)
 
 	sphere := shape.NewSphere()
 	m2 := material.New()
-	m2.SetPattern(pattern.NewGradient(color.FromHex("ffff00ff"), color.Black))
+	p2 := pattern.NewCheckers(color.FromHex("ff69b4ff"), color.White)
+	p2.SetTransform(transforms.Scaling(0.3, 0.3, 0.3))
+	m2.SetPattern(p2)
+
 	sphere.SetMaterial(&m2)
-	sphere.SetTransform(transforms.Translation(5, 5, 10))
+	sphere.SetTransform(transforms.Translation(5, 2, 5))
 
 	w := world.World{}
 	l := light.PointLight(tuple.Point(0, 10, -5), color.New(1, 1, 1))
 
 	w.Light = &l
 	w.Objects = []shape.Shape{floor, sphere}
-	camera := camera.New(200, 100, math.Pi/3)
+	camera := camera.New(1000, 500, math.Pi/3)
 	camera.Transform = transforms.ViewTransform(tuple.Point(0, 5, -5), tuple.Point(10, 0, 10), tuple.Vector(0, 1, 0))
 	can := camera.Render(w)
 	ppm := can.ToPPM()

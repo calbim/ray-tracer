@@ -70,6 +70,11 @@ func (p *Stripe) GetTransform() *matrix.Matrix {
 	return p.Transform
 }
 
+//SetTransform sets a stripe's transformation matrix
+func (p *Stripe) SetTransform(m *matrix.Matrix) {
+	p.Transform = m
+}
+
 //PatternAt returns the color of a stripe at a point
 func (p *Stripe) PatternAt(point tuple.Tuple) *color.Color {
 	if int(math.Floor(point.X))%2 == 0 {
@@ -86,6 +91,11 @@ func NewGradient(a color.Color, b color.Color) *Gradient {
 //GetTransform returns a gradient's transformation matrix
 func (p *Gradient) GetTransform() *matrix.Matrix {
 	return p.Transform
+}
+
+//SetTransform sets a gradient's transformation matrix
+func (p *Gradient) SetTransform(m *matrix.Matrix) {
+	p.Transform = m
 }
 
 //PatternAt returns the color of a gradient at a point
@@ -105,6 +115,11 @@ func (p *Ring) GetTransform() *matrix.Matrix {
 	return p.Transform
 }
 
+//SetTransform sets a gradient's transformation matrix
+func (p *Ring) SetTransform(m *matrix.Matrix) {
+	p.Transform = m
+}
+
 //PatternAt returns the color of a gradient at a point
 func (p *Ring) PatternAt(point tuple.Tuple) *color.Color {
 	v := int(math.Floor(math.Sqrt(point.X*point.X + point.Z*point.Z)))
@@ -114,14 +129,19 @@ func (p *Ring) PatternAt(point tuple.Tuple) *color.Color {
 	return &p.b
 }
 
-//NewCheckers returns a gradient pattern
+//NewCheckers returns a checkers pattern
 func NewCheckers(a color.Color, b color.Color) *Checkers {
 	return &Checkers{a: a, b: b, Transform: matrix.Identity}
 }
 
-//GetTransform returns a gradient's transformation matrix
+//GetTransform returns a checkers transformation matrix
 func (p *Checkers) GetTransform() *matrix.Matrix {
 	return p.Transform
+}
+
+//SetTransform sets a checkers transformation matrix
+func (p *Checkers) SetTransform(m *matrix.Matrix) {
+	p.Transform = m
 }
 
 //PatternAt returns the color of a gradient at a point
