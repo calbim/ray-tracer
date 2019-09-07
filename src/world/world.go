@@ -79,6 +79,14 @@ func (w *World) IsShadowed(p tuple.Tuple) bool {
 	return false
 }
 
+//ReflectedColor determines the reflected color for a precomputation
+func (w *World) ReflectedColor(c *shape.Computation) color.Color {
+	if c.Object.GetMaterial().Reflective == 0 {
+		return color.Black
+	}
+	return color.White
+}
+
 type byValue []shape.Intersection
 
 func (s byValue) Len() int {

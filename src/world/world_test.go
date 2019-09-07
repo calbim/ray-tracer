@@ -181,6 +181,22 @@ func TestHitShouldOffsetPoint(t *testing.T) {
 	}
 }
 
+func TestReflectedColorNonReflectiveMaterial(t *testing.T) {
+	w := Default()
+	r := ray.New(tuple.Point(0, 0, 0), tuple.Vector(0, 0, 1))
+	s := w.Objects[1]
+	m := s.GetMaterial()
+	m.Ambient = 1
+	s.SetMaterial(m)
+	i := shape.NewIntersection(1, s)
+	comps := i.PrepareComputations(r)
+	col := w.ReflectedColor(&comps)
+	if !col.Equals(color.Black) {
+		t.Errorf("wanted color=%v, got %v", color.Black, col)
+	}
+
+}
+
 func contains(list []shape.Shape, s shape.Shape) bool {
 	for _, obj := range list {
 		trans := obj.GetTransform()

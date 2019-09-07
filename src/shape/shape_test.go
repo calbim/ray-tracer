@@ -477,3 +477,4 @@ func TestPrecomputeReflectionVector(t *testing.T) {
 		t.Errorf("wanted reflectv=%v, got %v", tuple.Vector(0, math.Sqrt2/2, math.Sqrt2/2), comps.Reflectv)
 	}
 }
+
