@@ -9,6 +9,7 @@ import (
 	"github.com/calbim/ray-tracer/src/color"
 	"github.com/calbim/ray-tracer/src/light"
 	"github.com/calbim/ray-tracer/src/material"
+	"github.com/calbim/ray-tracer/src/pattern"
 	"github.com/calbim/ray-tracer/src/ray"
 	"github.com/calbim/ray-tracer/src/shape"
 	"github.com/calbim/ray-tracer/src/tuple"
@@ -39,7 +40,7 @@ func TestSilhouette(t *testing.T) {
 				p := r.Position(hit.Value)
 				normalv := shape.NormalAt(hit.Object, p)
 				eyev := r.Direction.Negate()
-				color := sphere.Material.Lighting(light, p, eyev, *normalv, false)
+				color := sphere.Material.Lighting(getPatternObject(sphere), light, p, eyev, *normalv, false)
 				c.WritePixel(x, y, color)
 			}
 		}
@@ -50,4 +51,10 @@ func TestSilhouette(t *testing.T) {
 		fmt.Println(err)
 	}
 	fmt.Fprintf(file, ppm)
+}
+
+func getPatternObject(s shape.Shape) pattern.Object {
+	o := pattern.NewObject()
+	o.Transform = s.GetTransform()
+	return o
 }

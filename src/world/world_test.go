@@ -1,6 +1,7 @@
 package world
 
 import (
+	"math"
 	"testing"
 
 	"github.com/calbim/ray-tracer/src/util"
@@ -193,6 +194,22 @@ func TestReflectedColorNonReflectiveMaterial(t *testing.T) {
 	col := w.ReflectedColor(&comps)
 	if !col.Equals(color.Black) {
 		t.Errorf("wanted color=%v, got %v", color.Black, col)
+	}
+
+}
+
+func TestReflectedColorReflectiveMaterial(t *testing.T) {
+	w := Default()
+	plane := shape.NewPlane()
+	plane.GetMaterial().Reflective = 0.5
+	plane.SetTransform(transforms.Translation(0, -1, 0))
+	w.Objects = append(w.Objects, plane)
+	r := ray.New(tuple.Point(0, 0, -3), tuple.Vector(0, -math.Sqrt2/2, math.Sqrt2/2))
+	i := shape.NewIntersection(math.Sqrt2, plane)
+	comps := i.PrepareComputations(r)
+	col := w.ReflectedColor(&comps)
+	if !col.Equals(color.New(0.19032, 0.2379, 0.14274)) {
+		t.Errorf("wanted color=%v, got %v", color.New(0.19032, 0.2379, 0.14274), col)
 	}
 
 }

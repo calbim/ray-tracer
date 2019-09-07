@@ -51,7 +51,7 @@ func TestScene(t *testing.T) {
 	middle.SetTransform(transforms.Translation(-0.5, 1, 0.5))
 	mMaterial := material.New()
 	middle.Material = &mMaterial
-	middle.Material.SetPattern(pattern.Stripe(color.FromHex("f6abb6ff"), color.White))
+	middle.Material.SetPattern(pattern.NewStripe(color.FromHex("f6abb6ff"), color.White))
 	middle.Material.Color = color.FromHex("f6abb6ff")
 	middle.Material.Diffuse = 0.9
 	middle.Material.Specular = 0.3
@@ -61,7 +61,7 @@ func TestScene(t *testing.T) {
 	rMaterial := material.New()
 	right.Material = &rMaterial
 	right.Material.Color = color.FromHex("ff4785ff")
-	middle.Material.SetPattern(pattern.Stripe(color.FromHex("ff4785ff"), color.White))
+	middle.Material.SetPattern(pattern.NewStripe(color.FromHex("ff4785ff"), color.White))
 
 	right.Material.Diffuse = 0.7
 	right.Material.Specular = 0.4

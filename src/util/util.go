@@ -6,7 +6,7 @@ import (
 )
 
 // Eps is Epsilon
-var Eps = 0.00001
+var Eps = 0.0001
 
 // Equals checks if two floats are almost equal
 func Equals(f1, f2 float64) bool {
