@@ -20,6 +20,7 @@ type Material struct {
 	Shininess  float64
 	Pattern    *pattern.Pattern
 	hasPattern bool
+	Reflective float64
 }
 
 //New returns a default material

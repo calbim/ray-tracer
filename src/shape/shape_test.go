@@ -467,3 +467,13 @@ func TestRayIntersectPlaneFromBelow(t *testing.T) {
 		t.Errorf("wanted intersection value=%v, got %v", 1, xs[0].Object)
 	}
 }
+
+func TestPrecomputeReflectionVector(t *testing.T) {
+	s := NewPlane()
+	r := ray.New(tuple.Point(0, 1, -1), tuple.Vector(0, -math.Sqrt2/2, math.Sqrt2/2))
+	i := NewIntersection(math.Sqrt2/2.0, s)
+	comps := i.PrepareComputations(r)
+	if !comps.Reflectv.Equals(tuple.Vector(0, math.Sqrt2/2, math.Sqrt2/2)) {
+		t.Errorf("wanted reflectv=%v, got %v", tuple.Vector(0, math.Sqrt2/2, math.Sqrt2/2), comps.Reflectv)
+	}
+}

@@ -128,3 +128,10 @@ func TestLightingWithPatternApplied(t *testing.T) {
 		t.Errorf("wanted c2=%v, got %v", color.White, c2)
 	}
 }
+
+func TestReflectivityForDefaultMaterial(t *testing.T) {
+	m := New()
+	if m.Reflective != 0.0 {
+		t.Errorf("wanted default reflectivity=%v, got %v", m.Reflective, 0.0)
+	}
+}
