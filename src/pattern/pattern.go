@@ -12,6 +12,7 @@ import (
 //Pattern interface
 type Pattern interface {
 	GetTransform() *matrix.Matrix
+	SetTransform(m *matrix.Matrix)
 	PatternAt(point tuple.Tuple) *color.Color
 }
 
@@ -42,6 +43,14 @@ type Checkers struct {
 	b         color.Color
 	Transform *matrix.Matrix
 }
+
+//RadialGradient pattern
+type RadialGradient struct {
+	a         color.Color
+	b         color.Color
+	Transform *matrix.Matrix
+}
+
 
 //Object struct
 type Object struct {
@@ -151,6 +160,29 @@ func (p *Checkers) PatternAt(point tuple.Tuple) *color.Color {
 		return &p.a
 	}
 	return &p.b
+}
+
+//NewRadialGradient returns a radial gradient pattern
+func NewRadialGradient(a color.Color, b color.Color) *RadialGradient {
+	return &RadialGradient{a: a, b: b, Transform: matrix.Identity}
+}
+
+//GetTransform returns a radian gradient transformation matrix
+func (p *RadialGradient) GetTransform() *matrix.Matrix {
+	return p.Transform
+}
+
+//SetTransform sets a radial gradient's transformation matrix
+func (p *RadialGradient) SetTransform(m *matrix.Matrix) {
+	p.Transform = m
+}
+
+//PatternAt returns the color of a radial gradient at a point
+func (p *RadialGradient) PatternAt(point tuple.Tuple) *color.Color {
+	v := math.Sqrt(point.X*point.X + point.Z*point.Z)
+	diff := p.b.Subtract(p.a)
+	c := p.a.Add(diff.Multiply(v - math.Floor(v)))
+	return &c
 }
 
 //AtObject returns the color of a stripe at a point on an object
